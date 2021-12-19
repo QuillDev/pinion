@@ -1,12 +1,17 @@
-package moe.quill.pinion
+package moe.quill.pinion.items
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataContainer
+import java.util.*
 
 class ItemBuilder(private val item: ItemStack) {
     constructor(type: Material) : this(ItemStack(type))
@@ -55,6 +60,23 @@ class ItemBuilder(private val item: ItemStack) {
 
     fun flags(vararg flags: ItemFlag): ItemBuilder {
         return applyMeta { it.removeItemFlags(*flags) }
+    }
+
+    //Skull Meta
+    fun setTexture(texture: String): ItemBuilder {
+        return applyMeta {
+            val skull = it as? SkullMeta ?: return@applyMeta
+            val profile = Bukkit.createProfile(UUID.randomUUID())
+            profile.setProperty(ProfileProperty("textures", texture))
+            skull.playerProfile = profile
+        }
+    }
+
+    fun setOwner(offlinePlayer: OfflinePlayer): ItemBuilder {
+        return applyMeta {
+            val skull = it as? SkullMeta ?: return@applyMeta
+            skull.owningPlayer = offlinePlayer
+        }
     }
 
     //Meta
