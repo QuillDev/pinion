@@ -3,7 +3,10 @@ package moe.quill.pinion.commands
 import moe.quill.pinion.commands.annotations.BukkitCommandWrapper
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
+import moe.quill.pinion.commands.translation.CommandArgTranslator
+import moe.quill.pinion.commands.translation.basic.ColorTranslator
 import org.bukkit.Bukkit
+import org.bukkit.Color
 import org.bukkit.plugin.Plugin
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -14,6 +17,10 @@ import kotlin.reflect.full.hasAnnotation
 class CommandProcessor(private val plugin: Plugin) {
     private val commandMap = mutableMapOf<String, MutableMap<String, KFunction<*>>>()
     val translators = mutableMapOf<KClass<*>, CommandArgTranslator<*>>()
+
+    init {
+        registerTranslator(Color::class, ColorTranslator())
+    }
 
     fun <T : Any> registerTranslator(target: KClass<out T>, translator: CommandArgTranslator<T>) {
         translators[target] = translator

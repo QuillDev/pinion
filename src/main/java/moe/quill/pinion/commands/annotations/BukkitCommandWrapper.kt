@@ -94,7 +94,7 @@ class BukkitCommandWrapper(
                 klass.java.isEnum -> {
                     val enum = getEnumValues(klass).firstOrNull { it.name.uppercase() == raw } ?: run {
                         sender.sendMessage(
-                            Component.text("Invalid value '$raw'!")
+                            Component.text("Invalid value '$raw' for argument ${param.name} !")
                                 .append(
                                     Component.text(" Expected type ${klass.simpleName}!")
                                         .color(NamedTextColor.RED)
@@ -148,6 +148,7 @@ class BukkitCommandWrapper(
         location: Location?
     ): MutableList<String> {
         val args = rawArgs.toList()
+
         return when (args.size) {
             0, 1 -> filterInput(aliasBindings.keys, args.getOrNull(0) ?: "")
             else -> {
@@ -156,37 +157,39 @@ class BukkitCommandWrapper(
                 //Args for determining parameters
                 val paramArgs = args.drop(1)
                 val currentArg = paramArgs.last()
-
                 //Get any non-innate arguments
+
                 val param = command.params
                     .filterNot { isInnate(it.type.classifier) }
                     .getOrNull(paramArgs.lastIndex)
                     ?: return mutableListOf()
 
                 val klass = param.type.classifier as? KClass<*> ?: return mutableListOf()
-                Bukkit.getLogger().info("${klass.simpleName}")
 
-                return when {
-                    klass.java.isEnum -> filterInput(
-                        getEnumValues(klass).map { it.name }.toMutableList(),
-                        currentArg
-                    )
-                    klass == Player::class ->
-                        filterInput(Bukkit.getOnlinePlayers().map { it.name }
-                            .toMutableList(), currentArg)
-                    commandProcessor.translators.contains(klass) -> {
-                        return filterInput(
-                            commandProcessor.translators[klass]!!.translationNames().toMutableList(), currentArg
-                        )
-                    }
-                    else -> mutableListOf()
-                }
+                return processTab(klass, currentArg)
             }
         }
-
     }
 
     fun register(plugin: Plugin) = Bukkit.getServer().commandMap.register(plugin.name, this)
+
+    fun processTab(klass: KClass<*>, arg: String?): MutableList<String> {
+        return when {
+            klass.java.isEnum -> filterInput(
+                getEnumValues(klass).map { it.name }.toMutableList(),
+                arg
+            )
+            klass == Player::class ->
+                filterInput(Bukkit.getOnlinePlayers().map { it.name }
+                    .toMutableList(), arg)
+            commandProcessor.translators.contains(klass) -> {
+                return filterInput(
+                    commandProcessor.translators[klass]!!.translationNames().toMutableList(), arg
+                )
+            }
+            else -> mutableListOf()
+        }
+    }
 
     /**
      * Prints out help for this class's children
