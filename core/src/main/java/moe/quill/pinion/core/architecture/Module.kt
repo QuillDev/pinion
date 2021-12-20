@@ -1,4 +1,4 @@
-package moe.quill.pinion.architecture
+package moe.quill.pinion.core.architecture
 
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience

@@ -70,5 +70,6 @@
     <modules>
         <module>core</module>
         <module>selections</module>
+        <module>commands</module>
     </modules>
 </project>

@@ -1,4 +1,4 @@
-package moe.quill.pinion.functional;
+package moe.quill.pinion.core.functional;
 
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask

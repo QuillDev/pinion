@@ -1,4 +1,4 @@
-package moe.quill.pinion.items
+package moe.quill.pinion.core.items
 
 import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component

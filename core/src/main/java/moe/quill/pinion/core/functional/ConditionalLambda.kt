@@ -1,4 +1,4 @@
-package moe.quill.pinion.functional
+package moe.quill.pinion.core.functional
 
 class ConditionalLambda(runner: (Lambda) -> Unit, private val condition: () -> Boolean) : Lambda(runner) {
 
