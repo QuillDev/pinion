@@ -124,17 +124,10 @@ class BukkitCommandWrapper(
                         sender.sendMessage(Component.text("Input value $raw is invalid.").color(NamedTextColor.RED))
                         return true
                     }
-                    Bukkit.getLogger().info("Translation result ${translation::class.simpleName}")
-                    Bukkit.getLogger().info("Required: ${(param.type.classifier as? KClass<*>)?.simpleName}")
                     mappedArgs[param] = translation
                 }
                 else -> {}
             }
-        }
-        Bukkit.getLogger().info("${mappedArgs.size} - ${command.executor.parameters.size}")
-        mappedArgs.forEach {
-            Bukkit.getLogger()
-                .info("Expected: ${(it.key.type.classifier as? KClass<*>)?.simpleName} - Recieved: ${it.value::class.simpleName}")
         }
         command.executor.callBy(mappedArgs)
 

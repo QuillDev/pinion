@@ -1,0 +1,4 @@
+name: Selections
+version: '${project.version}'
+main: moe.quill.pinion.selections.Selections
+api-version: 1.18
