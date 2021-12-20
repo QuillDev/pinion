@@ -5,6 +5,10 @@ import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
 import moe.quill.pinion.commands.translation.CommandArgTranslator
 import moe.quill.pinion.commands.translation.basic.ColorTranslator
+import moe.quill.pinion.commands.translation.basic.NamedTextColorTranslator
+import moe.quill.pinion.commands.translation.basic.TextColorTranslator
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.plugin.Plugin
@@ -20,6 +24,8 @@ class CommandProcessor(private val plugin: Plugin) {
 
     init {
         registerTranslator(Color::class, ColorTranslator())
+        registerTranslator(NamedTextColor::class, NamedTextColorTranslator())
+        registerTranslator(TextColor::class, TextColorTranslator())
     }
 
     fun <T : Any> registerTranslator(target: KClass<out T>, translator: CommandArgTranslator<T>) {
