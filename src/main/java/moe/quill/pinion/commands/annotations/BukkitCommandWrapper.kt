@@ -151,7 +151,7 @@ class BukkitCommandWrapper(
                     .filterNot { innateArgs.contains(it) }
                     .getOrNull(paramArgs.lastIndex)
                     ?: return mutableListOf()
-
+                
                 return when {
                     activeParam.java.isEnum -> filterInput(
                         getEnumValues(activeParam).map { it.name }.toMutableList(),
