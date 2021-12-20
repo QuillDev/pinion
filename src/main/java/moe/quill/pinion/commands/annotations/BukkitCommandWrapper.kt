@@ -140,7 +140,6 @@ class BukkitCommandWrapper(
         return when (args.size) {
             0, 1 -> filterInput(aliasBindings.keys, args.getOrNull(0) ?: "")
             else -> {
-                //TODO: Process tab completions for various types
                 val command = aliasBindings[args[0]] ?: return mutableListOf()
 
                 //Args for determining parameters

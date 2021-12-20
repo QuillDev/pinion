@@ -29,7 +29,6 @@ class CommandProcessor(private val plugin: Plugin) {
             Bukkit.getLogger().warning("Attempted to register a non-command ${commandInstance::class.simpleName}!")
             return
         }
-        //TODO: Check if we want to require a CommandSender
         //Get members and log that we're registering them
         val members = commandInstance::class::declaredFunctions.get().filter { it.hasAnnotation<Command>() }
         groupAnnotation.aliases.forEach {
