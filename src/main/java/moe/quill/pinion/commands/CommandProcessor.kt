@@ -12,8 +12,13 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 class CommandProcessor(private val plugin: Plugin) {
-
     private val commandMap = mutableMapOf<String, MutableMap<String, KFunction<*>>>()
+    val translators = mutableMapOf<KClass<*>, CommandArgTranslator<*>>()
+
+    fun <T : Any> registerTranslator(target: KClass<out T>, translator: CommandArgTranslator<T>) {
+        translators[target] = translator
+        Bukkit.getLogger().info("Registered translator for type ${target::class.simpleName}")
+    }
 
     /**
      * Register a class annotated with the
@@ -39,9 +44,8 @@ class CommandProcessor(private val plugin: Plugin) {
             //Get all parameters behind the instance call parameter
             val params = kFunction.parameters.mapNotNull { it.type.classifier as? KClass<*> }.drop(1)
             commandMeta += CommandMeta(commandAnnotation, commandInstance, kFunction, params)
-
         }
 
-        BukkitCommandWrapper(groupAnnotation, commandMeta).register(plugin)
+        BukkitCommandWrapper(groupAnnotation, commandMeta, this).register(plugin)
     }
 }
