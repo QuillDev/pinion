@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
 
 class BukkitCommandWrapper(
     group: CommandGroup,
@@ -23,7 +24,7 @@ class BukkitCommandWrapper(
     group.aliases.toList()
 ) {
 
-    private val innateArgs = listOf(CommandSender::class)
+    private val innateArgs = listOf<KClassifier>(CommandSender::class)
 
     //Bindings including all aliases and base name
     private val aliasBindings = mutableMapOf<String, CommandMeta>()
@@ -58,7 +59,7 @@ class BukkitCommandWrapper(
         }
 
         val paramArgs = args.drop(1)
-        if (paramArgs.size < command.params.filterNot { innateArgs.contains(it) }.size) {
+        if (paramArgs.size < command.params.filterNot { isInnate(it.type.classifier) }.size) {
             //TODO: Actually supply what they needed?
             sender.sendMessage(
                 Component.text("You must supply all of the required arguments!").color(NamedTextColor.RED)
@@ -66,15 +67,20 @@ class BukkitCommandWrapper(
             return true
         }
 
-        val mappedArgs = mutableListOf<Any>()
+        val mappedArgs = mutableMapOf(command.instanceParam to command.groupInstance)
         var argsIndex = 0
-
         command.params.forEach { param ->
+            //Get the class for this param
+            val klass = param.type.classifier as? KClass<*> ?: run {
+                Bukkit.getLogger().severe("Issue parsing $param")
+                return true
+            }
+
             //Process innate args without mutating arguments state
-            if (innateArgs.contains(param)) {
-                when (param) {
+            if (isInnate(klass)) {
+                when (klass) {
                     CommandSender::class -> {
-                        mappedArgs.add(sender)
+                        mappedArgs[param] = sender
                     }
                 }
                 return@forEach
@@ -85,47 +91,52 @@ class BukkitCommandWrapper(
             //Handle argument mapping
             when {
                 //Handle Enum Parsing
-                param.java.isEnum -> {
-                    val enum = getEnumValues(param).firstOrNull { it.name.uppercase() == raw } ?: run {
+                klass.java.isEnum -> {
+                    val enum = getEnumValues(klass).firstOrNull { it.name.uppercase() == raw } ?: run {
                         sender.sendMessage(
                             Component.text("Invalid value '$raw'!")
                                 .append(
-                                    Component.text(" Expected type ${param.simpleName}!")
+                                    Component.text(" Expected type ${klass.simpleName}!")
                                         .color(NamedTextColor.RED)
                                 )
                         )
                         return true
                     }
-                    mappedArgs.add(enum)
+                    mappedArgs[param] = enum
                 }
                 //Handle player parsing
-                param == Player::class -> {
+                klass == Player::class -> {
                     val player = Bukkit.getPlayer(raw) ?: run {
                         sender.sendMessage(
                             Component.text("Could not find a player with the name $raw!").color(NamedTextColor.RED)
                         )
                         return true
                     }
-                    mappedArgs.add(player)
+                    mappedArgs[param] = player
                 }
-                //TODO Number parsing
                 //Parse strings
-                param == String::class -> {
-                    mappedArgs.add(raw)
+                klass == String::class -> {
+                    mappedArgs[param] = raw
                 }
                 //Check registered command processors
-                commandProcessor.translators.contains(param) -> {
-                    val translation = commandProcessor.translators[param]!!.translateArgument(raw) ?: run {
+                commandProcessor.translators.contains(klass) -> {
+                    val translation = commandProcessor.translators[klass]!!.translateArgument(raw) ?: run {
                         sender.sendMessage(Component.text("Input value $raw is invalid.").color(NamedTextColor.RED))
                         return true
                     }
-                    mappedArgs.add(translation)
+                    Bukkit.getLogger().info("Translation result ${translation::class.simpleName}")
+                    Bukkit.getLogger().info("Required: ${(param.type.classifier as? KClass<*>)?.simpleName}")
+                    mappedArgs[param] = translation
                 }
                 else -> {}
             }
         }
-
-        command.executor.call(command.groupInstance, *mappedArgs.toTypedArray())
+        Bukkit.getLogger().info("${mappedArgs.size} - ${command.executor.parameters.size}")
+        mappedArgs.forEach {
+            Bukkit.getLogger()
+                .info("Expected: ${(it.key.type.classifier as? KClass<*>)?.simpleName} - Recieved: ${it.value::class.simpleName}")
+        }
+        command.executor.callBy(mappedArgs)
 
         return true
     }
@@ -147,22 +158,25 @@ class BukkitCommandWrapper(
                 val currentArg = paramArgs.last()
 
                 //Get any non-innate arguments
-                val activeParam = command.params
-                    .filterNot { innateArgs.contains(it) }
+                val param = command.params
+                    .filterNot { isInnate(it.type.classifier) }
                     .getOrNull(paramArgs.lastIndex)
                     ?: return mutableListOf()
-                
+
+                val klass = param.type.classifier as? KClass<*> ?: return mutableListOf()
+                Bukkit.getLogger().info("${klass.simpleName}")
+
                 return when {
-                    activeParam.java.isEnum -> filterInput(
-                        getEnumValues(activeParam).map { it.name }.toMutableList(),
+                    klass.java.isEnum -> filterInput(
+                        getEnumValues(klass).map { it.name }.toMutableList(),
                         currentArg
                     )
-                    activeParam == Player::class ->
+                    klass == Player::class ->
                         filterInput(Bukkit.getOnlinePlayers().map { it.name }
                             .toMutableList(), currentArg)
-                    commandProcessor.translators.contains(activeParam) -> {
+                    commandProcessor.translators.contains(klass) -> {
                         return filterInput(
-                            commandProcessor.translators[activeParam]!!.translationNames().toMutableList(), currentArg
+                            commandProcessor.translators[klass]!!.translationNames().toMutableList(), currentArg
                         )
                     }
                     else -> mutableListOf()
@@ -174,6 +188,9 @@ class BukkitCommandWrapper(
 
     fun register(plugin: Plugin) = Bukkit.getServer().commandMap.register(plugin.name, this)
 
+    /**
+     * Prints out help for this class's children
+     */
     private fun printHelp(sender: CommandSender) {
         var result = Component.text()
             .append(Component.text(name).color(NamedTextColor.GOLD))
@@ -197,10 +214,19 @@ class BukkitCommandWrapper(
         sender.sendMessage(result)
     }
 
+    //Whether this function is in the innate list
+    private fun isInnate(classifier: KClassifier?): Boolean {
+        classifier ?: return false
+        return innateArgs.contains(classifier)
+    }
+
+    //TODO: Some general kotlin helper maybe?
+    //Get enum values for the given KClass
     private fun getEnumValues(klass: KClass<*>): List<Enum<*>> =
         if (klass.java.isEnum) (klass.java.enumConstants as? Array<Enum<*>>)?.toList() ?: listOf()
         else listOf()
 
+    //Filter tab completion input
     private fun filterInput(list: MutableCollection<String>?, arg: String?): MutableList<String> {
         list ?: return mutableListOf()
         arg ?: return mutableListOf()

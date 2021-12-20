@@ -40,9 +40,15 @@ class CommandProcessor(private val plugin: Plugin) {
         //Register members by parsing their command arguments
         members.forEach { kFunction ->
             val commandAnnotation = kFunction.findAnnotation<Command>() ?: return@forEach
+            val instanceParam = kFunction.parameters.firstOrNull() ?: return@forEach
             //Get all parameters behind the instance call parameter
-            val params = kFunction.parameters.mapNotNull { it.type.classifier as? KClass<*> }.drop(1)
-            commandMeta += CommandMeta(commandAnnotation, commandInstance, kFunction, params)
+            commandMeta += CommandMeta(
+                commandAnnotation,
+                commandInstance,
+                instanceParam,
+                kFunction,
+                kFunction.parameters.drop(1)
+            )
         }
 
         BukkitCommandWrapper(groupAnnotation, commandMeta, this).register(plugin)
