@@ -5,12 +5,14 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataContainer
+import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
 class ItemBuilder(private val item: ItemStack) {
@@ -18,6 +20,15 @@ class ItemBuilder(private val item: ItemStack) {
 
     fun name(name: Component, italic: Boolean = false): ItemBuilder {
         return applyMeta { it.displayName(name.decoration(TextDecoration.ITALIC, italic)) }
+    }
+
+    //keys
+    fun <T, Z> addKey(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z): ItemBuilder {
+        return applyData { it.set(key, type, value!!) }
+    }
+
+    fun addMarkerKey(key: NamespacedKey): ItemBuilder {
+        return addKey(key, PersistentDataType.STRING, "")
     }
 
     //lore

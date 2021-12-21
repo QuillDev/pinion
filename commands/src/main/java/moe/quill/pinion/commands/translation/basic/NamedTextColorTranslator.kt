@@ -8,8 +8,8 @@ class NamedTextColorTranslator : CommandArgTranslator<NamedTextColor> {
         return ColorBind.values().map { it.name }
     }
 
-    override fun translateArgument(string: String): NamedTextColor? {
-        return ColorBind.values().firstOrNull { it.name.uppercase() == string.uppercase() }?.color
+    override fun translateArgument(arg: String): NamedTextColor? {
+        return ColorBind.values().firstOrNull { it.name.uppercase() == arg.uppercase() }?.color
     }
 }
 

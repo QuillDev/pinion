@@ -9,9 +9,9 @@ class TextColorTranslator : CommandArgTranslator<TextColor> {
         return listOf("r,g,b", "#000000")
     }
 
-    override fun translateArgument(string: String): TextColor? {
+    override fun translateArgument(arg: String): TextColor? {
         run {
-            val split = string.split(',')
+            val split = arg.split(',')
             if (split.size == 3) {
                 val r = split[0].toIntOrNull() ?: return@run
                 val g = split[1].toIntOrNull() ?: return@run
@@ -23,8 +23,8 @@ class TextColorTranslator : CommandArgTranslator<TextColor> {
         }
 
         run {
-            if (!string.startsWith('#')) return@run
-            val hex = string.removePrefix("#").toIntOrNull(16) ?: return@run
+            if (!arg.startsWith('#')) return@run
+            val hex = arg.removePrefix("#").toIntOrNull(16) ?: return@run
             return TextColor.color(hex)
         }
 

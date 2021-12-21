@@ -4,8 +4,8 @@ import moe.quill.pinion.commands.translation.CommandArgTranslator
 import org.bukkit.Color
 
 class ColorTranslator : CommandArgTranslator<Color> {
-    override fun translateArgument(string: String): Color? {
-        val split = string.split(',')
+    override fun translateArgument(arg: String): Color? {
+        val split = arg.split(',')
 
         //Allow them to specify RGB comma seperated
         run {
@@ -20,12 +20,12 @@ class ColorTranslator : CommandArgTranslator<Color> {
         }
 
         run {
-            if (!string.startsWith('#')) return@run
-            val hex = string.removePrefix("#").toIntOrNull(16) ?: return@run
+            if (!arg.startsWith('#')) return@run
+            val hex = arg.removePrefix("#").toIntOrNull(16) ?: return@run
             return Color.fromRGB(hex)
         }
 
-        return Colors.values().firstOrNull { string.uppercase() == it.name.uppercase() }?.color
+        return Colors.values().firstOrNull { arg.uppercase() == it.name.uppercase() }?.color
     }
 
     override fun translationNames(): Collection<String> {

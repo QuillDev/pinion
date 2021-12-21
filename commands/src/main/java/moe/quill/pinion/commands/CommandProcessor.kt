@@ -34,6 +34,7 @@ class CommandProcessor(private val plugin: Plugin) {
     }
 
     /**
+     * TODO: Add varargs call
      * Register a class annotated with the
      */
     fun registerCommand(commandInstance: Any) {
