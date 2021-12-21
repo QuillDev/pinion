@@ -2,8 +2,8 @@ package moe.quill.pinion.selections.managers.locations
 
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
-import moe.quill.pinion.selections.components.NamedLocation
-import moe.quill.pinion.selections.handler.SelectionHandler
+import moe.quill.pinion.selectapi.components.NamedLocation
+import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.CommandSender

@@ -2,7 +2,7 @@ package moe.quill.pinion.selections.managers.schematic
 
 import moe.quill.pinion.commands.translation.CommandArgTranslator
 import moe.quill.pinion.core.config.ConfigManager
-import moe.quill.pinion.selections.components.Schematic
+import moe.quill.pinion.selectapi.components.Schematic
 import org.bukkit.plugin.Plugin
 
 //TODO: Maybe back these with hashmaps for quicker lookup? Dont think it matters.

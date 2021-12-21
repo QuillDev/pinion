@@ -3,7 +3,7 @@ package moe.quill.pinion.selections.managers.locations
 import moe.quill.pinion.commands.annotations.CommandGroup
 import moe.quill.pinion.commands.translation.CommandArgTranslator
 import moe.quill.pinion.core.config.ConfigManager
-import moe.quill.pinion.selections.components.NamedLocation
+import moe.quill.pinion.selectapi.components.NamedLocation
 import org.bukkit.Location
 import org.bukkit.plugin.Plugin
 

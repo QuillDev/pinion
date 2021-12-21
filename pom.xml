@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
@@ -69,7 +69,8 @@
 
     <modules>
         <module>core</module>
-        <module>selections</module>
         <module>commands</module>
+        <module>selections</module>
+        <module>selections-api</module>
     </modules>
 </project>

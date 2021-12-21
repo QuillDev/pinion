@@ -1,6 +1,6 @@
 package moe.quill.pinion.selections.listeners
 
-import moe.quill.pinion.selections.handler.SelectionHandler
+import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import net.kyori.adventure.text.Component
 import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler

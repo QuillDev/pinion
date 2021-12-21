@@ -2,9 +2,9 @@ package moe.quill.pinion.selections.managers.zones
 
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
-import moe.quill.pinion.selections.components.Bounds
-import moe.quill.pinion.selections.components.Zone
-import moe.quill.pinion.selections.handler.SelectionHandler
+import moe.quill.pinion.selectapi.components.Bounds
+import moe.quill.pinion.selectapi.components.Zone
+import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.CommandSender

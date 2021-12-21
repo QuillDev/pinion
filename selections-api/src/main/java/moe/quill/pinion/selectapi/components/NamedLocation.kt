@@ -1,4 +1,4 @@
-package moe.quill.pinion.selections.components
+package moe.quill.pinion.selectapi.components
 
 import org.bukkit.Location
 import org.bukkit.configuration.serialization.ConfigurationSerializable

@@ -1,9 +1,10 @@
 package moe.quill.pinion.selections.handler
 
 import moe.quill.pinion.commands.CommandProcessor
-import moe.quill.pinion.selections.components.NamedLocation
-import moe.quill.pinion.selections.components.Schematic
-import moe.quill.pinion.selections.components.Zone
+import moe.quill.pinion.selectapi.components.NamedLocation
+import moe.quill.pinion.selectapi.components.Schematic
+import moe.quill.pinion.selectapi.components.Zone
+import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import moe.quill.pinion.selections.managers.locations.LocationCommands
 import moe.quill.pinion.selections.managers.locations.LocationManager
 import moe.quill.pinion.selections.managers.schematic.SchematicCommands

@@ -30,7 +30,7 @@ class CommandProcessor(private val plugin: Plugin) {
 
     fun <T : Any> registerTranslator(target: KClass<out T>, translator: CommandArgTranslator<T>) {
         translators[target] = translator
-        Bukkit.getLogger().info("Registered translator for type ${target::class.simpleName}")
+        Bukkit.getLogger().info("Registered translator for type '${target.simpleName}'")
     }
 
     /**
@@ -40,7 +40,7 @@ class CommandProcessor(private val plugin: Plugin) {
     fun registerCommand(commandInstance: Any) {
         //Process annotation groups
         val groupAnnotation = commandInstance::class.findAnnotation<CommandGroup>() ?: run {
-            Bukkit.getLogger().warning("Attempted to register a non-command ${commandInstance::class.simpleName}!")
+            Bukkit.getLogger().warning("Attempted to register a non-command '${commandInstance::class.simpleName}'!")
             return
         }
         //Get members and log that we're registering them

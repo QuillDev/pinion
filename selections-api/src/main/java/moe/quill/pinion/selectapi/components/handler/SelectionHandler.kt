@@ -1,8 +1,8 @@
-package moe.quill.pinion.selections.handler
+package moe.quill.pinion.selectapi.components.handler
 
-import moe.quill.pinion.selections.components.NamedLocation
-import moe.quill.pinion.selections.components.Schematic
-import moe.quill.pinion.selections.components.Zone
+import moe.quill.pinion.selectapi.components.NamedLocation
+import moe.quill.pinion.selectapi.components.Schematic
+import moe.quill.pinion.selectapi.components.Zone
 import org.bukkit.Location
 import java.util.*
 
