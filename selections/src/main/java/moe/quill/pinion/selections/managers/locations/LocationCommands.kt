@@ -42,7 +42,7 @@ class LocationCommands(private val selectionHandler: SelectionHandler) {
 
     }
 
-    @Command("remove")
+    @Command("remove", aliases = ["delete", "del"])
     fun remove(sender: CommandSender, namedLoc: NamedLocation) {
         selectionHandler.removeLocation(namedLoc)
         sender.sendMessage(

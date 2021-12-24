@@ -69,6 +69,10 @@ class ItemBuilder(private val item: ItemStack) {
         return applyMeta { it.isUnbreakable = unbreakable }
     }
 
+    fun modelData(data: Int): ItemBuilder {
+        return applyMeta { it.setCustomModelData(data) }
+    }
+
     fun flags(vararg flags: ItemFlag): ItemBuilder {
         return applyMeta { it.removeItemFlags(*flags) }
     }

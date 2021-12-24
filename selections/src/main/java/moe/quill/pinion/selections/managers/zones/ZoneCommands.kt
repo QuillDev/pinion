@@ -2,11 +2,14 @@ package moe.quill.pinion.selections.managers.zones
 
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
+import moe.quill.pinion.core.geometry.BoxUtil
 import moe.quill.pinion.selectapi.components.Bounds
 import moe.quill.pinion.selectapi.components.Zone
 import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Color
+import org.bukkit.Particle
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -48,7 +51,19 @@ class ZoneCommands(private val selectionHandler: SelectionHandler) {
 
     }
 
-    @Command("remove")
+    @Command("highlight")
+    fun highlight(zone: Zone) {
+        BoxUtil.getPoints(zone.toBoundingBox()).forEach {
+            zone.world.spawnParticle(
+                Particle.REDSTONE,
+                it.toLocation(zone.world),
+                1,
+                Particle.DustOptions(Color.RED, 4f)
+            )
+        }
+    }
+
+    @Command("remove", aliases = ["delete", "del"])
     fun remove(sender: CommandSender, zone: Zone) {
         selectionHandler.removeZone(zone)
         sender.sendMessage(

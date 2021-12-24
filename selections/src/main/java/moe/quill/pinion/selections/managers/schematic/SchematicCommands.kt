@@ -51,7 +51,7 @@ class SchematicCommands(private val selectionHandler: SelectionHandler) {
 
     }
 
-    @Command("remove")
+    @Command("remove", aliases = ["delete", "del"])
     fun remove(sender: CommandSender, schematic: Schematic) {
         selectionHandler.removeSchematic(schematic)
         sender.sendMessage(

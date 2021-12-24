@@ -33,8 +33,6 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
         commandProcessor.registerTranslator(NamedLocation::class, locationManager)
         commandProcessor.registerTranslator(Zone::class, zoneManager)
         commandProcessor.registerTranslator(Schematic::class, schematicManager)
-
-
     }
 
     //Selection Stuff

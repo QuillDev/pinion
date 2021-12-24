@@ -6,6 +6,7 @@ import org.bukkit.World
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.configuration.serialization.SerializableAs
 import org.bukkit.entity.Entity
+import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 
 @SerializableAs("Bounds")
@@ -52,5 +53,9 @@ open class Bounds(min: Vector, max: Vector, val world: World) : ConfigurationSer
             "max" to max,
             "world" to world.name
         )
+    }
+
+    fun toBoundingBox(): BoundingBox {
+        return BoundingBox.of(min, max)
     }
 }

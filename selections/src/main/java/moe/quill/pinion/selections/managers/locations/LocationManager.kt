@@ -34,5 +34,4 @@ class LocationManager(plugin: Plugin) :
     override fun translateArgument(arg: String): NamedLocation? {
         return data.firstOrNull { it.name == arg }
     }
-
 }
