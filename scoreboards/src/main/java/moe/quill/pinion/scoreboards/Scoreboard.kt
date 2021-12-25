@@ -20,13 +20,16 @@ import java.util.*
  * this MUST be registered in the 'ScoreboardManager' class
  * for it to be updated and shown to players correctly.
  */
-class Scoreboard(title: Entry, slot: DisplaySlot = DisplaySlot.SIDEBAR) {
+class Scoreboard(
+    title: Entry,
+    slot: DisplaySlot = DisplaySlot.SIDEBAR,
+    val bukkitBoard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
+) {
 
     private val tools = ScoreboardTools()
     private val serializer = LegacyComponentSerializer.legacyAmpersand()
     private val maxLines = 15
 
-    val bukkitBoard: Scoreboard = tools.getNewBoard()
     var entries = mutableListOf<Entry>()
 
     private var objective: Objective
@@ -37,7 +40,7 @@ class Scoreboard(title: Entry, slot: DisplaySlot = DisplaySlot.SIDEBAR) {
     private val contents = mutableMapOf<Int, Component>()
 
     init {
-        this.objective = bukkitBoard.registerNewObjective("SB", "dummy", title.get())
+        this.objective = this.bukkitBoard.registerNewObjective("SB", "dummy", title.get())
 
         objective.displaySlot = slot
         render()
