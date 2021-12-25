@@ -15,8 +15,13 @@ class ScoreboardTools {
         return Bukkit.getScoreboardManager().newScoreboard
     }
 
-    fun getObjective(scoreboard: Scoreboard, name: String = "dummy", entry: Component = Component.empty()): Objective {
-        return scoreboard.getObjective(name) ?: scoreboard.registerNewObjective(name, "dummy", entry)
+    fun getObjective(
+        scoreboard: Scoreboard,
+        name: String = "dummy",
+        criteria: String,
+        entry: Component = Component.empty()
+    ): Objective {
+        return scoreboard.getObjective(name) ?: scoreboard.registerNewObjective(name, criteria, entry)
     }
 
     fun getTeam(scoreboard: Scoreboard, name: String): Team {

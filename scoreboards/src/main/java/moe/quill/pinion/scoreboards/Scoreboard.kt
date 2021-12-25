@@ -40,8 +40,7 @@ class Scoreboard(
     private val contents = mutableMapOf<Int, Component>()
 
     init {
-        this.objective = this.bukkitBoard.registerNewObjective("SB", "dummy", title.get())
-
+        this.objective = tools.getObjective(bukkitBoard, "SB", "dummy", title.get())
         objective.displaySlot = slot
         render()
     }
