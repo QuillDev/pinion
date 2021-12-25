@@ -1,6 +1,6 @@
 package moe.quill.pinion.holograms
 
-import moe.quill.pinion.core.entries.Entry
+import moe.quill.pinion.core.architecture.entries.Entry
 import org.bukkit.Location
 import org.bukkit.entity.AreaEffectCloud
 

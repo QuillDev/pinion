@@ -1,18 +1,22 @@
 package moe.quill.pinion.core.beta.itembuilder
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.annotations.Beta
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
 //Extension for converting an itemstack to a builder
 fun ItemStack.builder(init: ItemBuilder.() -> Unit) = itemBuilder(this, init)
 
+@Beta
 class ItemBuilder(private val item: ItemStack) {
     constructor(type: Material) : this(ItemStack(type))
 
@@ -40,6 +44,14 @@ class ItemBuilder(private val item: ItemStack) {
 
     fun lore(mutator: Lore.() -> Unit) {
         lore.mutator()
+    }
+
+    fun <T, Z> addKey(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z) {
+        applyMeta { it.persistentDataContainer.set(key, type, value!!) }
+    }
+
+    fun addMarkerKey(key: NamespacedKey) {
+        addKey(key, PersistentDataType.STRING, "")
     }
 
     fun name(supplier: () -> Component) {
@@ -80,8 +92,6 @@ class test {
     init {
         itemBuilder(Material.AMETHYST_SHARD) {
             name { Component.text("") }
-            lore { +Component.empty() }
-            lore { listOf(Component.empty(), Component.text("Hello World!")) }
         }
     }
 }

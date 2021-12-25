@@ -1,6 +1,6 @@
 package moe.quill.pinion.scoreboards
 
-import moe.quill.pinion.core.entries.Entry
+import moe.quill.pinion.core.architecture.entries.Entry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit

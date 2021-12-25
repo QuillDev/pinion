@@ -1,6 +1,6 @@
 package moe.quill.pinion.holograms
 
-import moe.quill.pinion.core.entries.Entry
+import moe.quill.pinion.core.architecture.entries.Entry
 import moe.quill.pinion.core.util.spawnEntity
 import org.bukkit.Bukkit
 import org.bukkit.Location
