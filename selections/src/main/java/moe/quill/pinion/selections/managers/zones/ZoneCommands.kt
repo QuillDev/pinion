@@ -2,7 +2,7 @@ package moe.quill.pinion.selections.managers.zones
 
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
-import moe.quill.pinion.core.geometry.BoxUtil
+import moe.quill.pinion.core.geometry.getPoints
 import moe.quill.pinion.selectapi.components.Bounds
 import moe.quill.pinion.selectapi.components.Zone
 import moe.quill.pinion.selectapi.components.handler.SelectionHandler
@@ -53,7 +53,7 @@ class ZoneCommands(private val selectionHandler: SelectionHandler) {
 
     @Command("highlight")
     fun highlight(zone: Zone) {
-        BoxUtil.getPoints(zone.toBoundingBox()).forEach {
+        zone.toBoundingBox().getPoints().forEach {
             zone.world.spawnParticle(
                 Particle.REDSTONE,
                 it.toLocation(zone.world),

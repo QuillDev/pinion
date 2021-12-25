@@ -1,7 +1,7 @@
 package moe.quill.pinion.holograms
 
 import moe.quill.pinion.core.entries.Entry
-import moe.quill.pinion.core.util.EntityUtil
+import moe.quill.pinion.core.util.spawnEntity
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -38,7 +38,7 @@ interface Hologram {
     fun update() {
         //Create any entities we need if there are more lines
         while (entities.size < lines.size) {
-            entities += EntityUtil.spawnEntity(
+            entities += spawnEntity(
                 AreaEffectCloud::class,
                 location.add(
                     0.0,

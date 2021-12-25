@@ -3,21 +3,15 @@ package moe.quill.pinion.core.geometry
 import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 
-class BoxUtil {
-    companion object {
-        @JvmStatic
-        fun getPoints(box: BoundingBox): List<Vector> {
-            return listOf(
-                box.min,
-                Vector(box.minX, box.minY, box.maxZ),
-                Vector(box.minX, box.maxY, box.minZ),
-                Vector(box.minX, box.maxY, box.maxZ),
-                box.max,
-                Vector(box.maxX, box.maxY, box.minZ),
-                Vector(box.maxX, box.minY, box.maxZ),
-                Vector(box.maxX, box.minY, box.minZ)
-            )
-        }
-    }
-
+fun BoundingBox.getPoints(): List<Vector> = run {
+    return listOf(
+        this.min,
+        Vector(this.minX, this.minY, this.maxZ),
+        Vector(this.minX, this.maxY, this.minZ),
+        Vector(this.minX, this.maxY, this.maxZ),
+        this.max,
+        Vector(this.maxX, this.maxY, this.minZ),
+        Vector(this.maxX, this.minY, this.maxZ),
+        Vector(this.maxX, this.minY, this.minZ)
+    )
 }
