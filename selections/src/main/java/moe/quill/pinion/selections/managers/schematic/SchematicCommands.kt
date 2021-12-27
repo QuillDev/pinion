@@ -76,14 +76,17 @@ class SchematicCommands(private val selectionHandler: SelectionHandler) {
 
         sender.sendMessage(Component.text("Pasting schematic ${schematic.name}!").color(NamedTextColor.GREEN))
 
-        val senderLocation = sender.location
-        val location = senderLocation.clone()
+        val start = sender.location
+        val location = start.clone()
 
         val blockData = schematic.blockData
         for (x in blockData.indices) {
             for (y in blockData[x].indices) {
                 for (z in blockData[x][y].indices) {
-                    location.clone().add(x.toDouble(), y.toDouble(), z.toDouble()).block.blockData = blockData[x][y][z]
+                    location.x = start.x + x
+                    location.y = start.y + y
+                    location.z = start.z + z
+                    location.block.blockData = blockData[x][y][z]
                 }
             }
         }
