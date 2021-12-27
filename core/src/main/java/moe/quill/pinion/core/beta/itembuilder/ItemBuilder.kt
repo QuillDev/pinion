@@ -16,7 +16,6 @@ import java.util.*
 //Extension for converting an itemstack to a builder
 fun ItemStack.builder(init: ItemBuilder.() -> Unit) = itemBuilder(this, init)
 
-@Beta
 class ItemBuilder(private val item: ItemStack) {
     constructor(type: Material) : this(ItemStack(type))
 
@@ -76,11 +75,11 @@ class ItemBuilder(private val item: ItemStack) {
     }
 }
 
-fun itemBuilder(type: Material, init: ItemBuilder.() -> Unit): ItemStack {
+fun itemBuilder(type: Material, init: ItemBuilder.() -> Unit = {}): ItemStack {
     return itemBuilder(ItemStack(type), init)
 }
 
-fun itemBuilder(item: ItemStack, init: ItemBuilder.() -> Unit): ItemStack {
+fun itemBuilder(item: ItemStack, init: ItemBuilder.() -> Unit = {}): ItemStack {
     val ib = ItemBuilder(item)
     ib.init()
     return ib.build()

@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataContainer
 import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
+@Deprecated("Replaced in favor of using the normal itemBuilder method")
 class ItemBuilder(private val item: ItemStack) {
     constructor(type: Material) : this(ItemStack(type))
 
