@@ -73,7 +73,6 @@
         <module>selections</module>
         <module>selections-api</module>
         <module>scoreboards</module>
-        <module>toast</module>
         <module>holograms</module>
     </modules>
 </project>

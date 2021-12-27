@@ -1,11 +1,12 @@
 package moe.quill.pinion.selectapi.components
 
+import moe.quill.pinion.core.characteristics.Named
 import org.bukkit.Location
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.configuration.serialization.SerializableAs
 
 @SerializableAs("NamedLocation")
-class NamedLocation(val name: String, val location: Location) : ConfigurationSerializable {
+class NamedLocation(override val name: String, val location: Location) : ConfigurationSerializable, Named {
 
     companion object {
         @JvmStatic

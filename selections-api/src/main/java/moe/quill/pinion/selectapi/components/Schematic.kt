@@ -1,5 +1,6 @@
 package moe.quill.pinion.selectapi.components
 
+import moe.quill.pinion.core.characteristics.Named
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.data.BlockData
@@ -14,11 +15,11 @@ class Schematic(zone: Zone, val blockData: List<List<List<BlockData>>>) : Zone(z
         @JvmStatic
         fun getBlockData(bounds: Bounds): List<List<List<BlockData>>> {
             val xAxis = mutableListOf<List<List<BlockData>>>()
-            for (x in bounds.min.x.toInt() until bounds.max.x.toInt()) {
+            for (x in bounds.min.x.toInt()..bounds.max.x.toInt()) {
                 val yAxis = mutableListOf<List<BlockData>>()
-                for (y in bounds.min.y.toInt() until bounds.max.y.toInt()) {
+                for (y in bounds.min.y.toInt() .. bounds.max.y.toInt()) {
                     val zAxis = mutableListOf<BlockData>()
-                    for (z in bounds.min.z.toInt() until bounds.max.z.toInt()) {
+                    for (z in bounds.min.z.toInt() .. bounds.max.z.toInt()) {
                         val position =
                             Location(bounds.world, x.toDouble(), y.toDouble(), z.toDouble()).toBlockLocation()
                         zAxis += position.block.blockData

@@ -32,6 +32,7 @@ class ItemBuilder(private val item: ItemStack) {
             profile.setProperty(ProfileProperty("textures", texture()))
             skull.playerProfile = profile
         }
+
     }
 
     fun skullOwner(player: () -> OfflinePlayer) {

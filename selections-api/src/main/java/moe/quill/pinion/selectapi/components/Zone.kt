@@ -1,10 +1,11 @@
 package moe.quill.pinion.selectapi.components
 
+import moe.quill.pinion.core.characteristics.Named
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.configuration.serialization.SerializableAs
 
 @SerializableAs("Zone")
-open class Zone(val name: String, bounds: Bounds) : Bounds(bounds), ConfigurationSerializable {
+open class Zone(override val name: String, bounds: Bounds) : Bounds(bounds), ConfigurationSerializable, Named {
     constructor(zone: Zone) : this(zone.name, Bounds(zone.min, zone.max, zone.world))
 
     companion object {

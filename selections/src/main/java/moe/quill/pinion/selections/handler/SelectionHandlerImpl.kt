@@ -110,4 +110,16 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
     override fun getLocation(name: String): Location? {
         return locationManager.get(name)
     }
+
+    override fun getSchematics(): List<Schematic> {
+        return schematicManager.data
+    }
+
+    override fun getZones(): List<Zone> {
+        return zoneManager.data
+    }
+
+    override fun getLocations(): List<NamedLocation> {
+        return locationManager.data
+    }
 }

@@ -2,6 +2,8 @@ package moe.quill.pinion.selections.managers.zones
 
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
+import moe.quill.pinion.core.characteristics.Named
+import moe.quill.pinion.core.characteristics.join
 import moe.quill.pinion.core.geometry.getPoints
 import moe.quill.pinion.selectapi.components.Bounds
 import moe.quill.pinion.selectapi.components.Zone
@@ -19,6 +21,12 @@ class ZoneCommands(private val selectionHandler: SelectionHandler) {
     @Command("save")
     fun save(sender: CommandSender, name: String) {
         if (sender !is Player) return
+
+        if (name.isEmpty()) {
+            sender.sendMessage(Component.text("Invalid Name.").color(NamedTextColor.RED))
+            return
+        }
+
         val selection = selectionHandler.getSelection(sender.uniqueId) ?: run {
             sender.sendMessage(
                 Component.text(
@@ -71,5 +79,10 @@ class ZoneCommands(private val selectionHandler: SelectionHandler) {
                 "Removed the zone '${zone.name}'!"
             ).color(NamedTextColor.GREEN)
         )
+    }
+
+    @Command("list")
+    fun list(sender: CommandSender) {
+        sender.sendMessage(selectionHandler.getZones().join(Component.text(",")))
     }
 }
