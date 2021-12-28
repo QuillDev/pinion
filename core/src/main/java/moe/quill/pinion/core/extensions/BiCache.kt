@@ -17,6 +17,14 @@ class BiCache<T, Z>(vararg initial: Pair<T, Z>) {
         }
     }
 
+    fun leftValues(): Collection<Z> {
+        return leftCache.values
+    }
+
+    fun rightValues(): Collection<T> {
+        return rightCache.values
+    }
+
     @JvmName("setLeft")
     operator fun set(key: T, value: Z) {
         leftCache[key] = value
