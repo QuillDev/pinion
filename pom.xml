@@ -14,6 +14,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <kotlin.version>1.6.10</kotlin.version>
         <paper.version>1.18.1-R0.1-SNAPSHOT</paper.version>
+        <protocollib.version>4.8.0-SNAPSHOT</protocollib.version>
     </properties>
 
     <repositories>
@@ -74,5 +75,6 @@
         <module>selections-api</module>
         <module>scoreboards</module>
         <module>holograms</module>
+        <module>glow</module>
     </modules>
 </project>
