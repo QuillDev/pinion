@@ -75,6 +75,5 @@
         <module>selections-api</module>
         <module>scoreboards</module>
         <module>holograms</module>
-        <module>glow</module>
     </modules>
 </project>
