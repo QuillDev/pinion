@@ -9,7 +9,8 @@ import org.bukkit.plugin.Plugin
 class DynamicHologram(
     plugin: Plugin,
     override val location: Location,
-    updateRate: Long = 5
+    updateRate: Long = 5,
+    override val bottomUp: Boolean = false
 ) : Hologram {
     override val lines = mutableListOf<Entry>()
     override val entities = mutableListOf<AreaEffectCloud>()

@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 
 class BukkitCommandWrapper(
-    group: CommandGroup,
+    private val group: CommandGroup,
     meta: List<CommandMeta>,
     private val commandProcessor: CommandProcessor
 ) : Command(
@@ -42,6 +42,14 @@ class BukkitCommandWrapper(
     }
 
     override fun execute(sender: CommandSender, commandLabel: String, rawArgs: Array<out String>): Boolean {
+        if (!hasPermission(sender, group.permission)) {
+            sender.sendMessage(
+                Component.text("You do not have permission to execute this command.").color(NamedTextColor.RED)
+            )
+            return true
+        }
+
+        //Get the args
         val args = rawArgs.toList()
 
         //If no args are supplied
@@ -129,9 +137,20 @@ class BukkitCommandWrapper(
                 else -> {}
             }
         }
-        command.executor.callBy(mappedArgs)
 
+        //If the sender does not have this permission
+        if (!hasPermission(sender, command.command.permission)) {
+            sender.sendMessage(
+                Component.text("You do not have permission to execute this command.").color(NamedTextColor.RED)
+            )
+            return true
+        }
+        command.executor.callBy(mappedArgs)
         return true
+    }
+
+    fun hasPermission(sender: CommandSender, permission: String): Boolean {
+        return sender.hasPermission(permission) || sender.isOp
     }
 
     override fun tabComplete(

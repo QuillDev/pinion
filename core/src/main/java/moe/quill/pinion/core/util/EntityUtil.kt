@@ -27,6 +27,13 @@ fun spawnAreaCloud(location: Location): AreaEffectCloud {
     return spawnEntity(AreaEffectCloud::class, location) {
         it.radius = 0f
         it.setParticle(Particle.BLOCK_CRACK, airBlockData)
-        it.duration = Int.MAX_VALUE
+        it.ticksLived = Int.MAX_VALUE
     }!!
+}
+
+fun Entity.removeEverything() = removeRecursively(this)
+
+private fun removeRecursively(entity: Entity) {
+    entity.passengers.forEach { removeRecursively(it) }
+    entity.remove()
 }

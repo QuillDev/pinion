@@ -31,7 +31,7 @@ open class ConfigManager<T : Any>(
         this.data = read()
     }
 
-    fun read(): T {
+    open fun read(): T {
         val root = yaml().get("root") ?: return default()
         return root as T
     }

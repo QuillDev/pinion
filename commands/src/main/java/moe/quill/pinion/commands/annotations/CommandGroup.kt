@@ -4,5 +4,6 @@ package moe.quill.pinion.commands.annotations
 annotation class CommandGroup(
     val name: String,
     val description: String = "",
+    val permission: String = "",
     val aliases: Array<String> = []
 )

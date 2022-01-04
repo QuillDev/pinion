@@ -16,6 +16,8 @@ interface Hologram {
     val lines: MutableList<Entry>
     val entities: MutableList<AreaEffectCloud>
 
+    val bottomUp: Boolean
+
     fun addLine(entry: Entry) {
         lines += entry
         update()
@@ -40,9 +42,9 @@ interface Hologram {
         while (entities.size < lines.size) {
             entities += spawnEntity(
                 AreaEffectCloud::class,
-                location.add(
+                location.clone().add(
                     0.0,
-                    (entities.size * lineSize).toDouble(),
+                    (entities.size * (lineSize * (if (bottomUp) 1 else -1))).toDouble(),
                     0.0
                 )
             ) {

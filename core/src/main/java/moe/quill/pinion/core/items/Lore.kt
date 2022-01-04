@@ -1,4 +1,4 @@
-package moe.quill.pinion.core.beta.itembuilder
+package moe.quill.pinion.core.items
 
 import moe.quill.pinion.core.architecture.builders.ListMutator
 import net.kyori.adventure.text.Component
