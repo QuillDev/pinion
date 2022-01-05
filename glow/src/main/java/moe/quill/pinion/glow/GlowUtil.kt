@@ -3,12 +3,16 @@ package moe.quill.pinion.glow
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.PacketContainer
+import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.comphenix.protocol.wrappers.WrappedDataWatcher
+import io.papermc.paper.text.PaperComponents
 import moe.quill.pinion.core.extensions.biCache
 import moe.quill.pinion.packets.wrappers.SpawnLivingEntityPacket
 import moe.quill.pinion.packets.sendPacket
 import moe.quill.pinion.packets.wrappers.EntityMetadataPacket
 import moe.quill.pinion.packets.wrappers.WrappedSerializer
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
@@ -46,9 +50,16 @@ fun sendSpawnPacket(player: Player, block: Block): Int {
     return entityId
 }
 
+private val serializer = PaperComponents.gsonSerializer()
 fun sendMetadataPacket(player: Player, id: Int) {
     val metaPacket = EntityMetadataPacket(id, 0x40 + 0x20) {
         writeObject(16, WrappedSerializer.INT, 2)
+//        writeObject(
+//            2, WrappedDataWatcher.Registry.getChatComponentSerializer(), WrappedChatComponent.fromJson(
+//                serializer.serialize(Component.text("This is a test").color(NamedTextColor.GREEN))
+//            )
+//        )
+
     }
     player.sendPacket(metaPacket.packet)
 }

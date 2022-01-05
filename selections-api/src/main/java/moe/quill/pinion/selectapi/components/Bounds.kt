@@ -24,16 +24,26 @@ open class Bounds(min: Vector, max: Vector, val world: World) : ConfigurationSer
     }
 
     //Various methods for checking of the entity is within the bounds of this zone
-    fun inBounds(position: Vector): Boolean {
+    fun inAABB(position: Vector): Boolean {
         return position.isInAABB(min, max)
     }
 
-    fun inBounds(position: Location): Boolean {
-        return inBounds(position.toVector())
+    fun inBounds(position: Vector): Boolean {
+        return (min.blockX <= position.blockX && position.blockX <= max.blockX)
+                && (min.blockY <= position.blockY && position.blockY <= max.blockY)
+                && (min.blockZ <= position.blockZ && position.blockZ <= max.blockZ)
     }
 
-    fun inBounds(entity: Entity): Boolean {
-        return inBounds(entity.location)
+    fun inBounds(position: Location): Boolean {
+        return (position.world == world) && inBounds(position.toVector())
+    }
+
+    fun inAABB(position: Location): Boolean {
+        return inAABB(position.toVector())
+    }
+
+    fun inAABB(entity: Entity): Boolean {
+        return inAABB(entity.location)
     }
 
     companion object {

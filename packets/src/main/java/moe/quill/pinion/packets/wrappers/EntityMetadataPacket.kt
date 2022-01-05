@@ -22,8 +22,12 @@ class EntityMetadataPacket(
         init()
     }
 
-    fun writeObject(idx: Int, typeSerializer: WrappedSerializer, value: Any) {
-        watcher.setObject(idx, typeSerializer.serializer, value)
+    fun writeObject(idx: Int, serializer: WrappedDataWatcher.Serializer, value: Any) {
+        watcher.setObject(idx, serializer, value)
         packet.watchableCollectionModifier.write(0, watcher.watchableObjects)
+    }
+
+    fun writeObject(idx: Int, typeSerializer: WrappedSerializer, value: Any) {
+        writeObject(idx, typeSerializer.serializer, value)
     }
 }
