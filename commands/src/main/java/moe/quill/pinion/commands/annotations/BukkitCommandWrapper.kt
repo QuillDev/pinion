@@ -96,6 +96,7 @@ class BukkitCommandWrapper(
 
             val raw = paramArgs[argsIndex]
             argsIndex++
+
             //Handle argument mapping
             when {
                 //Handle Enum Parsing
@@ -125,6 +126,12 @@ class BukkitCommandWrapper(
                 //Parse strings
                 klass == String::class -> {
                     mappedArgs[param] = raw
+                }
+                klass == Int::class -> {
+                    mappedArgs[param] = raw.toInt()
+                }
+                klass == Double::class -> {
+                    mappedArgs[param] = raw.toDouble()
                 }
                 //Check registered command processors
                 commandProcessor.translators.contains(klass) -> {
