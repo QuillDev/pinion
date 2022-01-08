@@ -24,29 +24,28 @@
 
     <dependencies>
         <dependency>
+            <groupId>moe.quill.pinion</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>moe.quill.pinion</groupId>
+            <artifactId>packets</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <!--External Dependencies-->
+        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>${protocollib.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>moe.quill.pinion</groupId>
-            <artifactId>core</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>moe.quill.pinion</groupId>
-            <artifactId>packets</artifactId>
-            <version>0.0.1</version>
         </dependency>
     </dependencies>
 

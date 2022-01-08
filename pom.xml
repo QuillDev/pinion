@@ -91,5 +91,6 @@
         <module>holograms</module>
         <module>glow</module>
         <module>packets</module>
+        <module>spawners</module>
     </modules>
 </project>

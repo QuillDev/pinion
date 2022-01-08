@@ -30,7 +30,7 @@ class ScoreboardTools {
     }
 
     fun setGlowColor(scoreboard: Scoreboard, entity: Entity, color: NamedTextColor) {
-        val team = getTeam(scoreboard, color.examinableName())
+        val team = getTeam(scoreboard, color.asHexString())
         team.color(color)
         entity.isGlowing = true
 

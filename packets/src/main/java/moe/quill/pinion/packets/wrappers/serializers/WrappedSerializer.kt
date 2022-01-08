@@ -1,4 +1,4 @@
-package moe.quill.pinion.packets.wrappers
+package moe.quill.pinion.packets.wrappers.serializers
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher
 

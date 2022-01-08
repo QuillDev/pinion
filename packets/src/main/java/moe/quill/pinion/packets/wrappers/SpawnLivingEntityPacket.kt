@@ -1,10 +1,9 @@
 package moe.quill.pinion.packets.wrappers
 
 import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.PacketContainer
-import moe.quill.pinion.packets.PacketWrapper
-import moe.quill.pinion.packets.toPacket
+import moe.quill.pinion.packets.extensions.createPacket
 import org.bukkit.Location
 import java.util.*
 
@@ -13,12 +12,12 @@ import java.util.*
  * see <a href="https://wiki.vg/Entity_metadata#Entity_Metadata_Format"/>
  */
 class SpawnLivingEntityPacket(
-    val entityType: Int,
-    val location: Location,
-    val entityId: Int = (Math.random() * Int.MAX_VALUE).toInt(),
-    val uuid: UUID = UUID.randomUUID()
+    var entityType: Int,
+    var location: Location,
+    var entityId: Int = (Math.random() * Int.MAX_VALUE).toInt(),
+    var uuid: UUID = UUID.randomUUID()
 ) : PacketWrapper {
-    override val packet: PacketContainer = PacketType.Play.Server.SPAWN_ENTITY_LIVING.toPacket()
+    override val packet: PacketContainer = PacketType.Play.Server.SPAWN_ENTITY_LIVING.createPacket()
 
     init {
         packet.integers

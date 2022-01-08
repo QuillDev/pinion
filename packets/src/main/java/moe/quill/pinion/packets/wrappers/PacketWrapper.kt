@@ -1,4 +1,4 @@
-package moe.quill.pinion.packets
+package moe.quill.pinion.packets.wrappers
 
 import com.comphenix.protocol.events.PacketContainer
 

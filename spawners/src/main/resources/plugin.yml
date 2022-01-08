@@ -1,0 +1,5 @@
+name: Spawners
+version: '${project.version}'
+main: moe.quill.pinion.spawners.Spawners
+api-version: 1.18
+depend: [ ProtocolLib ]
