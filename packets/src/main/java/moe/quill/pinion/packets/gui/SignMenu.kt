@@ -6,11 +6,13 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.BlockPosition
 import com.comphenix.protocol.wrappers.nbt.NbtFactory
+import io.papermc.paper.text.PaperComponents
 import moe.quill.pinion.core.extensions.log
 import moe.quill.pinion.core.functional.Lambda
 import moe.quill.pinion.core.items.itemBuilder
 import moe.quill.pinion.core.menu.MenuItem
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -66,12 +68,19 @@ class SignMenu(
 
         val signNBT = NbtFactory.ofCompound("")
 
+        val lines = listOf("Test1", "Test2", "Test3", "Test4")
+        for (i in 0..3) signNBT.put(
+            "Text" + (i + 1),
+            "{\"extra\":[{\"text\":\"" + lines[i] + "\"}],\"text\":\"\"}"
+        )
+
         signNBT.put("x", position.x)
         signNBT.put("y", position.y)
         signNBT.put("z", position.z)
         signNBT.put("id", NBT_BLOCK_ID)
 
         signData.blockPositionModifier.write(0, this.position)
+        signData.integers.write(0, 9)
         signData.nbtModifier.write(0, signNBT)
 
         try {

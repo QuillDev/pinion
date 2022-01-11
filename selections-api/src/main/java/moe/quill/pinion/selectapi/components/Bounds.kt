@@ -3,6 +3,7 @@ package moe.quill.pinion.selectapi.components
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.block.Block
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.configuration.serialization.SerializableAs
 import org.bukkit.entity.Entity
@@ -44,6 +45,24 @@ open class Bounds(min: Vector, max: Vector, val world: World) : ConfigurationSer
 
     fun inAABB(entity: Entity): Boolean {
         return inAABB(entity.location)
+    }
+
+    fun blocks(): List<Block> {
+        val blocks = mutableListOf<Block>()
+
+        val location = Location(world, 0.0, 0.0, 0.0)
+        for (x in min.x.toInt()..max.x.toInt()) {
+            for (y in min.y.toInt()..max.y.toInt()) {
+                for (z in min.z.toInt()..max.z.toInt()) {
+                    location.x = x.toDouble()
+                    location.y = y.toDouble()
+                    location.z = z.toDouble()
+                    blocks += location.block
+                }
+            }
+        }
+
+        return blocks
     }
 
     companion object {

@@ -20,7 +20,8 @@ class EntityMeta(
     var leggings: ItemStack? = null,
     var boots: ItemStack? = null,
     var mainHand: ItemStack? = null,
-    var offHand: ItemStack? = null
+    var offHand: ItemStack? = null,
+    var weight: Int = 1,
 ) : ConfigurationSerializable {
 
     override fun serialize(): MutableMap<String, Any?> {
@@ -38,7 +39,9 @@ class EntityMeta(
             "leggings" to leggings,
             "boots" to boots,
             "mainHand" to mainHand,
-            "offHand" to offHand
+            "offHand" to offHand,
+            //Entity Weight
+            "weight" to weight,
         )
     }
 
@@ -59,7 +62,8 @@ class EntityMeta(
                 map["leggings"] as? ItemStack,
                 map["boots"] as? ItemStack,
                 map["mainHand"] as? ItemStack,
-                map["offHand"] as? ItemStack
+                map["offHand"] as? ItemStack,
+                map["weight"] as? Int ?: 1,
             )
         }
     }

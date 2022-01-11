@@ -31,7 +31,7 @@ class LocationCommands(private val selectionHandler: SelectionHandler) {
             return
         }
         //Get the location with the given name
-        selectionHandler.getLocation(name)?.let {
+        selectionHandler.getPossibleLocation(name)?.let {
             sender.sendMessage(
                 Component.text(
                     "A location with the name '$name' already exists."

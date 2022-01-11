@@ -48,10 +48,10 @@ interface Hologram {
                     0.0
                 )
             ) {
-                it.isCustomNameVisible = true
-                it.setParticle(Particle.BLOCK_CRACK, Bukkit.createBlockData(Material.AIR))
-                it.ticksLived = Int.MAX_VALUE
-                it.radius = 0f
+                isCustomNameVisible = true
+                setParticle(Particle.BLOCK_CRACK, Material.AIR.createBlockData())
+                ticksLived = Int.MAX_VALUE
+                radius = 0f
             } ?: return
         }
         entities.dropLast(entities.size - lines.size)

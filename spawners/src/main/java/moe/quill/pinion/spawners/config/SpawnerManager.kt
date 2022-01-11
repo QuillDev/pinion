@@ -1,6 +1,5 @@
 package moe.quill.pinion.spawners.config
 
-
 import moe.quill.pinion.commands.translation.CommandArgTranslator
 import moe.quill.pinion.core.config.ConfigManager
 import moe.quill.pinion.core.extensions.log
@@ -11,6 +10,7 @@ import moe.quill.pinion.core.menu.*
 import moe.quill.pinion.core.menu.icons.IconTexture
 import moe.quill.pinion.core.menu.icons.MobHead
 import moe.quill.pinion.core.menu.icons.entityIcons
+import moe.quill.pinion.glow.GlowHandler
 import moe.quill.pinion.packets.gui.textInput
 import moe.quill.pinion.spawners.lib.Spawner
 import moe.quill.pinion.spawners.lib.EntityMeta
@@ -33,6 +33,9 @@ import kotlin.reflect.full.isSubclassOf
 class SpawnerManager(private val plugin: Plugin) :
     ConfigManager<MutableList<Spawner>>(plugin, { mutableListOf() }, "spawners.yml"), CommandArgTranslator<Spawner>,
     Listener {
+
+    private val glowHandler = GlowHandler()
+    private val viewing = mutableSetOf<UUID>()
 
     init {
         Bukkit.getServer().pluginManager.registerEvents(this, plugin)
@@ -99,9 +102,9 @@ class SpawnerManager(private val plugin: Plugin) :
                 }) { it.openMenu(showTypesGUI({ createSpawnerGUI(spawner) }, spawner)) }
             }
 
-            set(2) {
+            set(2) { slot ->
                 booleanInput(
-                    2,
+                    slot,
                     this,
                     Component.text("Visible?"),
                     spawner.visible,
@@ -109,6 +112,56 @@ class SpawnerManager(private val plugin: Plugin) :
                     itemBuilder(Material.ENDER_EYE),
                     itemBuilder(Material.ENDER_PEARL)
                 )
+            }
+
+            //Whether this spawner is on or not
+            set(3) { slot ->
+                booleanInput(
+                    slot,
+                    this,
+                    Component.text("Enabled?"),
+                    spawner.enabled,
+                    { spawner.enabled = it },
+                    itemBuilder(Material.BLAZE_POWDER),
+                    itemBuilder(Material.GUNPOWDER)
+                )
+            }
+
+            //Radius Select
+            append {
+                MenuItem(itemBuilder(Material.HEART_OF_THE_SEA) { name { Component.text("Spawn Radius: ${spawner.radius}") } }) { player ->
+                    numberInput(plugin, spawner.radius, { spawner.radius = it }).show(player)
+                }
+            }
+            //Rate Select
+            append {
+                MenuItem(itemBuilder(Material.REDSTONE) { name { Component.text("Spawn Rate [Ticks Per Spawn]: ${spawner.rate}") } }) { player ->
+                    numberInput(plugin, spawner.rate.toInt(), { spawner.rate = it.toLong() }).show(player)
+                }
+            }
+            //Spawn Cap
+            append {
+                MenuItem(itemBuilder(Material.ZOMBIE_HEAD) { name { Component.text("Spawn Cap: ${spawner.spawnCap}") } }) { player ->
+                    numberInput(plugin, spawner.spawnCap, { spawner.spawnCap = it }).show(player)
+                }
+            }
+            append {
+                MenuItem(itemBuilder(Material.FERMENTED_SPIDER_EYE) { name { Component.text("View Range") } }) { player ->
+                    if (!viewing.contains(player.uniqueId)) {
+                        spawner.cache.forEach { glowHandler.showGlow(player, it) }
+                        viewing += player.uniqueId
+                        return@MenuItem
+                    }
+                    spawner.cache.forEach { glowHandler.hideGlow(player, it) }
+                    viewing -= player.uniqueId
+                }
+            }
+
+            //Entity Culler
+            set(18) {
+                MenuItem(itemBuilder(Material.DIAMOND_SWORD) { name { Component.text("Kill Entities.") } }) {
+                    spawner.entities.forEach { it.remove() }
+                }
             }
 
             //Icon for closing the menu
@@ -173,12 +226,12 @@ class SpawnerManager(private val plugin: Plugin) :
             set(36) { MenuItem(itemBuilder(Material.DIAMOND_SWORD)) }
             set(45) { MenuItem(itemBuilder(Material.SHIELD)) }
 
-            meta.helmet?.let { set(1) { MenuItem(it, true) } }
-            meta.chest?.let { set(10) { MenuItem(it, true) } }
-            meta.leggings?.let { set(19) { MenuItem(it, true) } }
-            meta.boots?.let { set(28) { MenuItem(it, true) } }
-            meta.mainHand?.let { set(37) { MenuItem(it, true) } }
-            meta.offHand?.let { set(46) { MenuItem(it, true) } }
+            meta.helmet?.let { item -> set(1) { MenuItem(item, true) } }
+            meta.chest?.let { item -> set(10) { MenuItem(item, true) } }
+            meta.leggings?.let { item -> set(19) { MenuItem(item, true) } }
+            meta.boots?.let { item -> set(28) { MenuItem(item, true) } }
+            meta.mainHand?.let { item -> set(37) { MenuItem(item, true) } }
+            meta.offHand?.let { item -> set(46) { MenuItem(item, true) } }
 
             for (idx in 0..53) {
                 if (idx % 9 == 0 || (idx - 1) % 9 == 0 || idx == 8) continue
@@ -208,7 +261,10 @@ class SpawnerManager(private val plugin: Plugin) :
             set(size - 1) {
                 MenuItem(itemBuilder(Material.BARRIER) {
                     name { Component.text("Remove").color(NamedTextColor.RED).decorate(TextDecoration.BOLD) }
-                }) { removeType(spawner.name, meta) }
+                }) { player ->
+                    removeType(spawner.name, meta)
+                    parent().show(player)
+                }
             }
 
             //Back Button
@@ -226,6 +282,14 @@ class SpawnerManager(private val plugin: Plugin) :
                 }
             }
 
+            //Entity Weights
+            append {
+                MenuItem(itemBuilder(Material.IRON_INGOT) { name { Component.text("Entity Weight: ${meta.weight}") } }) { player ->
+                    numberInput(plugin, meta.weight, { weight -> meta.weight = weight; player.openMenu(this) }).show(
+                        player
+                    )
+                }
+            }
 
             //Add different flag values
             val type = meta.type.entityClass?.kotlin ?: return@menuBuilder
@@ -272,6 +336,7 @@ class SpawnerManager(private val plugin: Plugin) :
                     )
                 }
             }
+
             //If the entities size can be modified
             if (type.isSubclassOf(Slime::class) || type.isSubclassOf(Phantom::class)) {
                 append {

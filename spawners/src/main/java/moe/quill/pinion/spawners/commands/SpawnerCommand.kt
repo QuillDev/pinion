@@ -1,26 +1,40 @@
 package moe.quill.pinion.spawners.commands
 
-import com.comphenix.protocol.ProtocolManager
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
+import moe.quill.pinion.core.extensions.registerEvents
+import moe.quill.pinion.core.items.itemBuilder
 import moe.quill.pinion.core.menu.openMenu
 import moe.quill.pinion.glow.GlowHandler
 import moe.quill.pinion.spawners.lib.Spawner
 import moe.quill.pinion.spawners.config.SpawnerManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
+import org.yaml.snakeyaml.Yaml
+import java.io.StringReader
 import java.util.*
 
-@CommandGroup("spawner", permission = "pinion.spanwers")
+@CommandGroup("sw", aliases = ["spawner"], permission = "pinion.spanwers")
 class SpawnerCommand(
     private val plugin: Plugin,
     private val glowHandler: GlowHandler,
     private val spawnerManager: SpawnerManager
-) {
+) : Listener {
+
+    init {
+        plugin.registerEvents(this)
+    }
 
     @Command("create")
     fun create(sender: CommandSender, name: String) {
@@ -72,6 +86,12 @@ class SpawnerCommand(
         sender.sendMessage(Component.text("Added type ${type.name} to the spawner ${spawner.name}"))
     }
 
+    @Command("spawn")
+    fun spawn(sender: CommandSender, spawner: Spawner) {
+        sender.sendMessage(Component.text("Ran spawn @ spawner ${spawner.name}"))
+        spawner.spawn()
+    }
+
     private val glowState = mutableMapOf<UUID, Boolean>()
 
     @Command("highlight")
@@ -89,5 +109,29 @@ class SpawnerCommand(
         }
 
         spawnerManager.data.forEach { glowHandler.hideGlow(sender, it.block) }
+    }
+
+    //Handle
+    private val spawnerKey = NamespacedKey(plugin, "spawner")
+
+    @Command("itemize")
+    fun itemize(player: CommandSender, spawner: Spawner) {
+        if (player !is Player) return
+
+        val yaml = YamlConfiguration()
+        yaml.set("root", spawner)
+        val item = itemBuilder(Material.SPAWNER) { addKey(spawnerKey, PersistentDataType.STRING, yaml.saveToString()) }
+        player.inventory.addItem(item)
+    }
+
+    @EventHandler
+    fun onPlaceSpawner(event: BlockPlaceEvent) {
+        val item = event.itemInHand
+        val data = item.itemMeta?.persistentDataContainer?.get(spawnerKey, PersistentDataType.STRING) ?: return
+
+        val spawner = YamlConfiguration.loadConfiguration(StringReader(data)).get("root") as? Spawner ?: return
+        val loc = event.blockPlaced
+        spawner.name = "${loc.world}|${loc.x}|${loc.y}|${loc.z}"
+        spawnerManager.addSpawner(spawner)
     }
 }

@@ -1,6 +1,6 @@
 package moe.quill.pinion.spawners.lib
 
-import moe.quill.pinion.core.characteristics.Named
+import moe.quill.pinion.core.extensions.registerEvents
 import moe.quill.pinion.core.functional.Lambda
 import moe.quill.pinion.core.util.spawnEntity
 import moe.quill.pinion.spawners.Spawners
@@ -21,17 +21,22 @@ import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
+import java.util.*
 
 @SerializableAs("Spawner")
 class Spawner(
-    plugin: Plugin,
-    override val name: String,
+    private val plugin: Plugin,
+    var name: String,
     var block: Block,
     visible: Boolean = true,
+    enabled: Boolean = true,
     val entityMeta: MutableList<EntityMeta> = mutableListOf(),
-    var rate: Long = 100,
-    var radius: Int = 3
-) : Listener, Named, ConfigurationSerializable {
+    var spawnCap: Int = 7,
+    rate: Long = 100,
+    radius: Int = 4
+) : Listener, ConfigurationSerializable {
+
+    private val random = Random()
 
     //Visible Setter
     var visible = visible
@@ -39,26 +44,53 @@ class Spawner(
             field = value
             block.type = if (visible) Material.SPAWNER else Material.AIR
         }
+    var enabled = enabled
+        set(value) {
+            field = value
+            startSpawn()
+        }
 
-    private val spawnCap = 7
-    private val entities = mutableSetOf<Entity>()
+    var radius = radius
+        set(value) {
+            field = value
+            updateCache()
+            updateSpawnLocations()
+        }
+    var rate = rate
+        set(value) {
+            field = value
+            startSpawn()
+        }
 
-    private val cache = mutableSetOf<Block>()
+    //Current spawned entity information
+    val entities = mutableSetOf<Entity>()
+
+    //Spawn Location Information
+    val cache = mutableSetOf<Block>()
     private val spawnLocations = mutableSetOf<Block>()
-    private val spawnTask: BukkitTask
+
+    //Spawning Task
+    private var spawnTask: BukkitTask? = null
 
     init {
         block.type = if (visible) Material.SPAWNER else Material.AIR
         if (visible) {
             entities.firstOrNull()?.let {
                 val state = block.state as CreatureSpawner
-                state.spawnedType = it.type
+                state.spawnedType = EntityType.CREEPER
             }
         }
 
         updateCache()
         updateSpawnLocations()
-        Bukkit.getServer().pluginManager.registerEvents(this, plugin)
+        startSpawn()
+
+        plugin.registerEvents(this)
+    }
+
+    private fun startSpawn() {
+        spawnTask?.cancel()
+        if (!enabled) return
         this.spawnTask = Lambda {
             entities.removeIf { !it.isValid }
             spawn()
@@ -66,36 +98,51 @@ class Spawner(
     }
 
     fun spawn() {
+        if (entityMeta.isEmpty()) return
         if (entities.size >= spawnCap) return
         if (!block.chunk.isLoaded) return
         if (Bukkit.getOnlinePlayers().none { it.location.distance(block.location) < 25 }) return
         if (block.lightLevel > 7) return
         val block = spawnLocations.randomOrNull() ?: return
-        val meta = entityMeta.randomOrNull() ?: return
 
-        val klass = meta.type.entityClass?.kotlin ?: return
+        val totalWeight = entityMeta.sumOf { it.weight }
+        val weightRoll = random.nextInt(totalWeight)
+        var weightSum = 0
 
-        entities += spawnEntity(klass, block.location.add(0.0, 1.0, 0.0)) { entity ->
+        var meta: EntityMeta? = null
+        for (curMeta in entityMeta) {
+            if (curMeta.weight < (weightRoll - weightSum)) {
+                weightSum += curMeta.weight
+                continue
+            }
+            meta = curMeta
+            break
+        }
+
+        val klass = meta?.type?.entityClass?.kotlin ?: return
+
+        entities += spawnEntity(klass, block.location.add(0.0, 1.0, 0.0)) {
             //Normal Living Entity Properties
-            if (entity is LivingEntity) {
-                entity.isGlowing = meta.glowing
-                entity.isInvisible = meta.invisible
-
+            if (this is LivingEntity) {
+                isGlowing = meta.glowing
+                isInvisible = meta.invisible
                 //Set their equipment
-                entity.equipment?.helmet = meta.helmet
-                entity.equipment?.chestplate = meta.chest
-                entity.equipment?.leggings = meta.leggings
-                entity.equipment?.boots = meta.boots
-                entity.equipment?.setItemInMainHand(meta.mainHand)
-                entity.equipment?.setItemInOffHand(meta.offHand)
+                equipment?.apply {
+                    helmet = meta.helmet
+                    chestplate = meta.chest
+                    leggings = meta.leggings
+                    boots = meta.boots
+                    setItemInMainHand(meta.mainHand)
+                    setItemInOffHand(meta.offHand)
+                }
+
             }
 
             //Creeper Properties
-            if (entity is Creeper) run { entity.isPowered = meta.charged }
-
+            if (this is Creeper) run { isPowered = meta.charged }
             //Check size conditions
-            if (entity is Slime) run { entity.size = meta.size }
-            if (entity is Phantom) run { entity.size = meta.size }
+            if (this is Slime) run { size = meta.size }
+            if (this is Phantom) run { size = meta.size }
         }!!
     }
 
@@ -131,28 +178,28 @@ class Spawner(
 
     fun disable() {
         block.type = Material.AIR
-        spawnTask.cancel()
+        spawnTask?.cancel()
     }
 
     @EventHandler
     fun onBreakBlock(event: BlockBreakEvent) {
         if (!visible) return
         if (event.block != block) return
-        spawnTask.cancel()
+        spawnTask?.cancel()
     }
 
     @EventHandler
     fun onEntityExplode(event: EntityExplodeEvent) {
         if (!visible) return
         if (!event.blockList().contains(block)) return
-        spawnTask.cancel()
+        spawnTask?.cancel()
     }
 
     @EventHandler
     fun onExplosion(event: BlockExplodeEvent) {
         if (!visible) return
         if (!event.blockList().contains(block)) return
-        spawnTask.cancel()
+        spawnTask?.cancel()
     }
 
 
@@ -164,7 +211,9 @@ class Spawner(
                 map["name"] as String,
                 (map["location"] as Location).block,
                 map["visible"] as? Boolean ?: true,
+                map["enabled"] as? Boolean ?: true,
                 (map["types"] as MutableList<EntityMeta>),
+                (map["spawnCap"] as? Number)?.toInt() ?: 7,
                 (map["rate"] as Number).toLong(),
                 (map["radius"] as Number).toInt()
             )
@@ -176,7 +225,9 @@ class Spawner(
             "name" to name,
             "location" to block.location,
             "visible" to visible,
+            "enabled" to enabled,
             "types" to entityMeta,
+            "spawnCap" to spawnCap,
             "rate" to rate,
             "radius" to radius
         )

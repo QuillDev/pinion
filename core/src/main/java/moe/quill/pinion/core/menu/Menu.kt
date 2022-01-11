@@ -40,13 +40,13 @@ open class Menu(
      * if a null value is supplied
      * then we set the slot to be nothing.
      */
-    fun set(int: Int, itemSupplier: () -> MenuItem?) {
-        itemSupplier()?.let {
-            contents[int] = it
-            inventory.setItem(int, it.icon)
+    fun set(slot: Int, itemSupplier: (Int) -> MenuItem?) {
+        itemSupplier(slot)?.let {
+            contents[slot] = it
+            inventory.setItem(slot, it.icon)
         } ?: run {
-            contents -= int
-            inventory.setItem(int, null)
+            contents -= slot
+            inventory.setItem(slot, null)
         }
     }
 

@@ -17,7 +17,7 @@ val entityTypeCache = EntityType.values().mapNotNull {
     else it.entityClass to it
 }.toMap()
 
-fun <T : Entity> spawnEntity(klass: KClass<out T>, location: Location, preSpawn: (T) -> Unit = {}): T? {
+fun <T : Entity> spawnEntity(klass: KClass<out T>, location: Location, preSpawn: T.() -> Unit = {}): T? {
     val type = entityTypeCache[klass.java] ?: return null
     return location.world.spawnEntity(location, type, CreatureSpawnEvent.SpawnReason.CUSTOM) {
         preSpawn(it as T)
@@ -27,9 +27,9 @@ fun <T : Entity> spawnEntity(klass: KClass<out T>, location: Location, preSpawn:
 private val airBlockData = Bukkit.createBlockData(Material.AIR)
 fun spawnAreaCloud(location: Location): AreaEffectCloud {
     return spawnEntity(AreaEffectCloud::class, location) {
-        it.radius = 0f
-        it.setParticle(Particle.BLOCK_CRACK, airBlockData)
-        it.ticksLived = Int.MAX_VALUE
+        radius = 0f
+        setParticle(Particle.BLOCK_CRACK, airBlockData)
+        ticksLived = Int.MAX_VALUE
     }!!
 }
 
