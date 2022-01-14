@@ -131,7 +131,8 @@ class SpawnerCommand(
 
         val spawner = YamlConfiguration.loadConfiguration(StringReader(data)).get("root") as? Spawner ?: return
         val loc = event.blockPlaced
-        spawner.name = "${loc.world}|${loc.x}|${loc.y}|${loc.z}"
+        spawner.block = loc
+        spawner.name = "${loc.world.name}>${loc.x},${loc.y},${loc.z}"
         spawnerManager.addSpawner(spawner)
     }
 }

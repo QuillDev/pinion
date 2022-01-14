@@ -1,0 +1,4 @@
+name: BuilderTools
+version: '${project.version}'
+main: moe.quill.pinion.buildertools.BuilderTools
+api-version: 1.18

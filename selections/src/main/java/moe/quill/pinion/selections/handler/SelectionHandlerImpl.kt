@@ -100,11 +100,19 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
 
 
     override fun getSchematic(name: String): Schematic {
-        return schematicManager.get(name)!!
+        return getPossibleSchematic(name)!!
+    }
+
+    override fun getPossibleSchematic(name: String): Schematic? {
+        return schematicManager.get(name)
     }
 
     override fun getZone(name: String): Zone {
-        return zoneManager.get(name)!!
+        return getPossibleZone(name)!!
+    }
+
+    override fun getPossibleZone(name: String): Zone? {
+        return zoneManager.get(name)
     }
 
     override fun getPossibleLocation(name: String): Location? {

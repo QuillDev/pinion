@@ -26,10 +26,13 @@ interface SelectionHandler {
     fun removeZone(name: String)
     fun removeLocation(name: String)
 
+    //Getting
     fun getSchematic(name: String): Schematic
+    fun getPossibleSchematic(name: String): Schematic?
     fun getZone(name: String): Zone
-    fun getPossibleLocation(name: String): Location?
+    fun getPossibleZone(name: String): Zone?
     fun getLocation(name: String): Location
+    fun getPossibleLocation(name: String): Location?
 
     fun getSchematics(): List<Schematic>
     fun getZones(): List<Zone>

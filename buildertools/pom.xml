@@ -9,8 +9,7 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>spawners</artifactId>
-    <version>0.0.2</version>
+    <artifactId>builder-tools</artifactId>
 
     <build>
         <plugins>
@@ -70,28 +69,11 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>${protocollib.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>moe.quill.pinion</groupId>
-            <artifactId>core</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>moe.quill.pinion</groupId>
-            <artifactId>glow</artifactId>
-            <version>0.0.1</version>
-        </dependency>
         <dependency>
             <groupId>moe.quill.pinion</groupId>
             <artifactId>commands</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

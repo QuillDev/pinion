@@ -34,7 +34,7 @@ class SchematicCommands(private val selectionHandler: SelectionHandler) {
             return
         }
         //Get the location with the given name
-        selectionHandler.getSchematic(name)?.let {
+        selectionHandler.getPossibleSchematic(name)?.let {
             sender.sendMessage(
                 Component.text(
                     "A schematic with the name '$name' already exists."

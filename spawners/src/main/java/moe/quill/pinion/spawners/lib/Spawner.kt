@@ -33,7 +33,8 @@ class Spawner(
     val entityMeta: MutableList<EntityMeta> = mutableListOf(),
     var spawnCap: Int = 7,
     rate: Long = 100,
-    radius: Int = 4
+    radius: Int = 4,
+    displayEntity: EntityType = EntityType.CREEPER
 ) : Listener, ConfigurationSerializable {
 
     private val random = Random()
@@ -42,7 +43,7 @@ class Spawner(
     var visible = visible
         set(value) {
             field = value
-            block.type = if (visible) Material.SPAWNER else Material.AIR
+            updateBlock()
         }
     var enabled = enabled
         set(value) {
@@ -61,6 +62,11 @@ class Spawner(
             field = value
             startSpawn()
         }
+    var displayEntity = displayEntity
+        set(value) {
+            field = value
+            updateBlock()
+        }
 
     //Current spawned entity information
     val entities = mutableSetOf<Entity>()
@@ -73,14 +79,7 @@ class Spawner(
     private var spawnTask: BukkitTask? = null
 
     init {
-        block.type = if (visible) Material.SPAWNER else Material.AIR
-        if (visible) {
-            entities.firstOrNull()?.let {
-                val state = block.state as CreatureSpawner
-                state.spawnedType = EntityType.CREEPER
-            }
-        }
-
+        updateBlock()
         updateCache()
         updateSpawnLocations()
         startSpawn()
@@ -144,6 +143,18 @@ class Spawner(
             if (this is Slime) run { size = meta.size }
             if (this is Phantom) run { size = meta.size }
         }!!
+    }
+
+    private fun updateBlock() {
+        block.type = Material.AIR
+        if (!visible) {
+            return
+        }
+        block.type = Material.SPAWNER
+        val state = block.state as CreatureSpawner
+        state.spawnedType = displayEntity
+
+
     }
 
     private fun updateSpawnLocations() {
@@ -215,7 +226,8 @@ class Spawner(
                 (map["types"] as MutableList<EntityMeta>),
                 (map["spawnCap"] as? Number)?.toInt() ?: 7,
                 (map["rate"] as Number).toLong(),
-                (map["radius"] as Number).toInt()
+                (map["radius"] as Number).toInt(),
+                enumValueOf(map["displayEntity"] as? String ?: "CREEPER")
             )
         }
     }
@@ -229,7 +241,8 @@ class Spawner(
             "types" to entityMeta,
             "spawnCap" to spawnCap,
             "rate" to rate,
-            "radius" to radius
+            "radius" to radius,
+            "displayEntity" to displayEntity
         )
     }
 }

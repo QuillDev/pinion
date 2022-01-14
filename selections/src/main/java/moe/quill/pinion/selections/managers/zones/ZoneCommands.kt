@@ -36,7 +36,7 @@ class ZoneCommands(private val selectionHandler: SelectionHandler) {
             return
         }
         //Get the location with the given name
-        selectionHandler.getZone(name)?.let {
+        selectionHandler.getPossibleZone(name)?.let {
             sender.sendMessage(
                 Component.text(
                     "A zone with the name '$name' already exists."

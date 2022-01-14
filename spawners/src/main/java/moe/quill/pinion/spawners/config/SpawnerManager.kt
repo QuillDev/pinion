@@ -101,8 +101,14 @@ class SpawnerManager(private val plugin: Plugin) :
                     name { Component.text("View Entities").color(NamedTextColor.GREEN) }
                 }) { it.openMenu(showTypesGUI({ createSpawnerGUI(spawner) }, spawner)) }
             }
+            //
+            set(2) {
+                MenuItem(itemBuilder(Material.CREEPER_HEAD) {
+                    name { Component.text("Set Display Entity").color(NamedTextColor.GREEN) }
+                }) { it.openMenu(createSpawnerDisplayGUI({ createSpawnerGUI(spawner) }, spawner)) }
+            }
 
-            set(2) { slot ->
+            set(3) { slot ->
                 booleanInput(
                     slot,
                     this,
@@ -115,7 +121,7 @@ class SpawnerManager(private val plugin: Plugin) :
             }
 
             //Whether this spawner is on or not
-            set(3) { slot ->
+            set(4) { slot ->
                 booleanInput(
                     slot,
                     this,
@@ -128,24 +134,24 @@ class SpawnerManager(private val plugin: Plugin) :
             }
 
             //Radius Select
-            append {
+            set(5) {
                 MenuItem(itemBuilder(Material.HEART_OF_THE_SEA) { name { Component.text("Spawn Radius: ${spawner.radius}") } }) { player ->
                     numberInput(plugin, spawner.radius, { spawner.radius = it }).show(player)
                 }
             }
             //Rate Select
-            append {
+            set(6) {
                 MenuItem(itemBuilder(Material.REDSTONE) { name { Component.text("Spawn Rate [Ticks Per Spawn]: ${spawner.rate}") } }) { player ->
                     numberInput(plugin, spawner.rate.toInt(), { spawner.rate = it.toLong() }).show(player)
                 }
             }
             //Spawn Cap
-            append {
+            set(7) {
                 MenuItem(itemBuilder(Material.ZOMBIE_HEAD) { name { Component.text("Spawn Cap: ${spawner.spawnCap}") } }) { player ->
                     numberInput(plugin, spawner.spawnCap, { spawner.spawnCap = it }).show(player)
                 }
             }
-            append {
+            set(9) {
                 MenuItem(itemBuilder(Material.FERMENTED_SPIDER_EYE) { name { Component.text("View Range") } }) { player ->
                     if (!viewing.contains(player.uniqueId)) {
                         spawner.cache.forEach { glowHandler.showGlow(player, it) }
@@ -157,19 +163,18 @@ class SpawnerManager(private val plugin: Plugin) :
                 }
             }
 
-            //Entity Culler
-            set(18) {
-                MenuItem(itemBuilder(Material.DIAMOND_SWORD) { name { Component.text("Kill Entities.") } }) {
-                    spawner.entities.forEach { it.remove() }
-                }
-            }
-
             //Icon for closing the menu
             set(8) {
                 MenuItem(itemBuilder(Material.PLAYER_HEAD) {
                     name { Component.text("Close Menu").color(NamedTextColor.RED).decorate(TextDecoration.BOLD) }
                     skullTexture { IconTexture.EXIT.texture }
                 }) { it.closeInventory() }
+            }
+            //Entity Culler
+            set(18) {
+                MenuItem(itemBuilder(Material.DIAMOND_SWORD) { name { Component.text("Kill Entities.") } }) {
+                    spawner.entities.forEach { it.remove() }
+                }
             }
             //Icon for deleting the spawner
             set(26) {
@@ -191,6 +196,19 @@ class SpawnerManager(private val plugin: Plugin) :
             }
         }
     }
+
+    private fun createSpawnerDisplayGUI(parent: () -> Menu, spawner: Spawner): Menu {
+        return menuBuilder(plugin, Component.text("Entity Display"), 6) {
+            set(0) { backButton(parent) }
+
+            var idx = 1
+            entityIcons.forEach { (entityType, icon) ->
+                set(idx) { MenuItem(icon) { spawner.displayEntity = entityType; it.openMenu(parent()) } }
+                idx++
+            }
+        }
+    }
+
 
     private fun showTypesGUI(parent: () -> Menu, spawner: Spawner): Menu {
         return menuBuilder(plugin, Component.text("Entity Types"), 6) {
