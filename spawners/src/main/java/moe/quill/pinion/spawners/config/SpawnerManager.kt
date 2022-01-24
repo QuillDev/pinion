@@ -318,6 +318,19 @@ class SpawnerManager(private val plugin: Plugin) :
                         it.openMenu(createEquipmentMenu({ createMetaMenu(parent, spawner, meta) }, meta))
                     }
                 }
+
+                append { slot ->
+                    booleanInput(
+                        slot,
+                        this,
+                        Component.text("Override Equipment?"),
+                        meta.overrideEquipment,
+                        { meta.overrideEquipment = it },
+                        itemBuilder(Material.ARMOR_STAND),
+                        itemBuilder(Material.ARMOR_STAND)
+                    )
+                }
+
                 //Add a boolean field for assignment
                 append { slot ->
                     booleanInput(
@@ -351,6 +364,19 @@ class SpawnerManager(private val plugin: Plugin) :
                         Component.text("Charged?"),
                         meta.charged,
                         { meta.charged = it }
+                    )
+                }
+            }
+
+            //Ageable
+            if (type.isSubclassOf(Ageable::class)) {
+                append { slot ->
+                    booleanInput(
+                        slot,
+                        this,
+                        Component.text("IsBaby?"),
+                        meta.isBaby,
+                        { meta.isBaby = it }
                     )
                 }
             }

@@ -3,11 +3,13 @@ package moe.quill.pinion.spawners.commands
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
 import moe.quill.pinion.core.extensions.registerEvents
+import moe.quill.pinion.core.items.builder
 import moe.quill.pinion.core.items.itemBuilder
 import moe.quill.pinion.core.menu.openMenu
 import moe.quill.pinion.glow.GlowHandler
 import moe.quill.pinion.spawners.lib.Spawner
 import moe.quill.pinion.spawners.config.SpawnerManager
+import moe.quill.pinion.spawners.lib.EntityMeta
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -19,6 +21,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
 import org.yaml.snakeyaml.Yaml
@@ -111,17 +114,38 @@ class SpawnerCommand(
         spawnerManager.data.forEach { glowHandler.hideGlow(sender, it.block) }
     }
 
+
     //Handle
     private val spawnerKey = NamespacedKey(plugin, "spawner")
 
     @Command("itemize")
     fun itemize(player: CommandSender, spawner: Spawner) {
         if (player !is Player) return
+        player.inventory.addItem(spawner.itemize())
+    }
 
-        val yaml = YamlConfiguration()
-        yaml.set("root", spawner)
-        val item = itemBuilder(Material.SPAWNER) { addKey(spawnerKey, PersistentDataType.STRING, yaml.saveToString()) }
-        player.inventory.addItem(item)
+    @Command("normal", "Gives a basic spawner for the given entity type", aliases = ["base"])
+    fun normal(player: CommandSender, type: EntityType) {
+        if (player !is Player) return
+        val spawner = Spawner(
+            plugin,
+            type.name,
+            player.location.block,
+            entityMeta = mutableListOf(EntityMeta(type)),
+            displayEntity = type,
+        )
+        //Itemize and give the spawner to the player
+        val copy = spawner.itemize().builder { name { Component.text(type.name) } }
+        player.inventory.addItem(copy)
+
+        spawner.disable()
+        spawner.enabled = false
+        spawner.visible = false
+
+    }
+
+    @EventHandler
+    fun onBlockPick(event: PlayerInteractEvent) {
     }
 
     @EventHandler
@@ -130,9 +154,14 @@ class SpawnerCommand(
         val data = item.itemMeta?.persistentDataContainer?.get(spawnerKey, PersistentDataType.STRING) ?: return
 
         val spawner = YamlConfiguration.loadConfiguration(StringReader(data)).get("root") as? Spawner ?: return
+
+        //Clean up the original location
+        spawner.block.type = Material.AIR
+
         val loc = event.blockPlaced
         spawner.block = loc
-        spawner.name = "${loc.world.name}>${loc.x},${loc.y},${loc.z}"
+        spawner.name = "${spawner.name}>${loc.x},${loc.y},${loc.z}"
         spawnerManager.addSpawner(spawner)
+        spawner.updateBlock()
     }
 }

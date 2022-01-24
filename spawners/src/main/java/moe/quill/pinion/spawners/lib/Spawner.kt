@@ -1,15 +1,16 @@
 package moe.quill.pinion.spawners.lib
 
+import moe.quill.pinion.core.extensions.onlinePlayers
 import moe.quill.pinion.core.extensions.registerEvents
 import moe.quill.pinion.core.functional.Lambda
+import moe.quill.pinion.core.items.itemBuilder
 import moe.quill.pinion.core.util.spawnEntity
 import moe.quill.pinion.spawners.Spawners
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.CreatureSpawner
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.configuration.serialization.SerializableAs
 import org.bukkit.entity.*
@@ -18,6 +19,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.entity.EntityExplodeEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
@@ -31,8 +34,8 @@ class Spawner(
     visible: Boolean = true,
     enabled: Boolean = true,
     val entityMeta: MutableList<EntityMeta> = mutableListOf(),
-    var spawnCap: Int = 7,
-    rate: Long = 100,
+    var spawnCap: Int = 3,
+    rate: Long = 250,
     radius: Int = 4,
     displayEntity: EntityType = EntityType.CREEPER
 ) : Listener, ConfigurationSerializable {
@@ -83,7 +86,6 @@ class Spawner(
         updateCache()
         updateSpawnLocations()
         startSpawn()
-
         plugin.registerEvents(this)
     }
 
@@ -100,7 +102,7 @@ class Spawner(
         if (entityMeta.isEmpty()) return
         if (entities.size >= spawnCap) return
         if (!block.chunk.isLoaded) return
-        if (Bukkit.getOnlinePlayers().none { it.location.distance(block.location) < 25 }) return
+        if (onlinePlayers().none { it.gameMode != GameMode.SPECTATOR && it.location.distance(block.location) < 16 }) return
         if (block.lightLevel > 7) return
         val block = spawnLocations.randomOrNull() ?: return
 
@@ -125,16 +127,24 @@ class Spawner(
             if (this is LivingEntity) {
                 isGlowing = meta.glowing
                 isInvisible = meta.invisible
-                //Set their equipment
-                equipment?.apply {
-                    helmet = meta.helmet
-                    chestplate = meta.chest
-                    leggings = meta.leggings
-                    boots = meta.boots
-                    setItemInMainHand(meta.mainHand)
-                    setItemInOffHand(meta.offHand)
-                }
 
+                //If the override toggle is on
+                if (meta.overrideEquipment) {
+                    //Set their equipment
+                    equipment?.apply {
+                        helmet = meta.helmet
+                        chestplate = meta.chest
+                        leggings = meta.leggings
+                        boots = meta.boots
+                        setItemInMainHand(meta.mainHand)
+                        setItemInOffHand(meta.offHand)
+                    }
+                }
+            }
+
+            if (this is Ageable) {
+                if (meta.isBaby) setBaby()
+                else setAdult()
             }
 
             //Creeper Properties
@@ -145,7 +155,7 @@ class Spawner(
         }!!
     }
 
-    private fun updateBlock() {
+    fun updateBlock() {
         block.type = Material.AIR
         if (!visible) {
             return
@@ -153,8 +163,6 @@ class Spawner(
         block.type = Material.SPAWNER
         val state = block.state as CreatureSpawner
         state.spawnedType = displayEntity
-
-
     }
 
     private fun updateSpawnLocations() {
@@ -192,6 +200,16 @@ class Spawner(
         spawnTask?.cancel()
     }
 
+    //Handle //TODO: Merge keys
+    private val spawnerKey = NamespacedKey(plugin, "spawner")
+
+    //Turn this spawner into an item
+    fun itemize(): ItemStack {
+        val yaml = YamlConfiguration()
+        yaml.set("root", this)
+        return itemBuilder(Material.SPAWNER) { addKey(spawnerKey, PersistentDataType.STRING, yaml.saveToString()) }
+    }
+
     @EventHandler
     fun onBreakBlock(event: BlockBreakEvent) {
         if (!visible) return
@@ -212,7 +230,6 @@ class Spawner(
         if (!event.blockList().contains(block)) return
         spawnTask?.cancel()
     }
-
 
     companion object {
         @JvmStatic
@@ -242,7 +259,7 @@ class Spawner(
             "spawnCap" to spawnCap,
             "rate" to rate,
             "radius" to radius,
-            "displayEntity" to displayEntity
+            "displayEntity" to displayEntity.name
         )
     }
 }

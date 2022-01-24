@@ -1,10 +1,13 @@
 package moe.quill.pinion.selections.handler
 
 import moe.quill.pinion.commands.CommandProcessor
+import moe.quill.pinion.selectapi.components.LocationGroup
 import moe.quill.pinion.selectapi.components.NamedLocation
 import moe.quill.pinion.selectapi.components.Schematic
 import moe.quill.pinion.selectapi.components.Zone
 import moe.quill.pinion.selectapi.components.handler.SelectionHandler
+import moe.quill.pinion.selections.managers.locationgroup.LocationGroupCommands
+import moe.quill.pinion.selections.managers.locationgroup.LocationGroupHandler
 import moe.quill.pinion.selections.managers.locations.LocationCommands
 import moe.quill.pinion.selections.managers.locations.LocationManager
 import moe.quill.pinion.selections.managers.schematic.SchematicCommands
@@ -24,12 +27,15 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
     private val locationManager = LocationManager(plugin)
     private val zoneManager = ZoneManager(plugin)
     private val schematicManager = SchematicManager(plugin)
+    private val locationGroupHandler = LocationGroupHandler(plugin)
 
     init {
+        commandProcessor.registerCommand(LocationGroupCommands(plugin, this))
         commandProcessor.registerCommand(LocationCommands(this))
         commandProcessor.registerCommand(ZoneCommands(this))
         commandProcessor.registerCommand(SchematicCommands(this))
 
+        commandProcessor.registerTranslator(LocationGroup::class, locationGroupHandler)
         commandProcessor.registerTranslator(NamedLocation::class, locationManager)
         commandProcessor.registerTranslator(Zone::class, zoneManager)
         commandProcessor.registerTranslator(Schematic::class, schematicManager)
@@ -73,6 +79,9 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
         locationManager.save(name, location)
     }
 
+    override fun addLocationGroup(name: String, location: MutableList<Location>) {
+        locationGroupHandler.save(name, location)
+    }
 
     override fun removeSchematic(schematic: Schematic) {
         removeSchematic(schematic.name)
@@ -98,6 +107,10 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
         locationManager.remove(name)
     }
 
+    override fun removeLocationGroup(name: String) {
+        locationGroupHandler.remove(name)
+    }
+
 
     override fun getSchematic(name: String): Schematic {
         return getPossibleSchematic(name)!!
@@ -118,6 +131,14 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
     override fun getPossibleLocation(name: String): Location? {
         return locationManager.get(name)
 
+    }
+
+    override fun getLocationGroup(name: String): LocationGroup {
+        return getPossibleLocationGroup(name)!!
+    }
+
+    override fun getPossibleLocationGroup(name: String): LocationGroup? {
+        return locationGroupHandler.get(name)
     }
 
     override fun getLocation(name: String): Location {

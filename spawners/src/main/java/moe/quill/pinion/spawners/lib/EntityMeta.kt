@@ -22,6 +22,10 @@ class EntityMeta(
     var mainHand: ItemStack? = null,
     var offHand: ItemStack? = null,
     var weight: Int = 1,
+    //Vanilla equipment override
+    var overrideEquipment: Boolean = false,
+    //Is baby
+    var isBaby: Boolean = false
 ) : ConfigurationSerializable {
 
     override fun serialize(): MutableMap<String, Any?> {
@@ -42,6 +46,8 @@ class EntityMeta(
             "offHand" to offHand,
             //Entity Weight
             "weight" to weight,
+            "overrideEquipment" to overrideEquipment,
+            "isBaby" to isBaby
         )
     }
 
@@ -64,6 +70,8 @@ class EntityMeta(
                 map["mainHand"] as? ItemStack,
                 map["offHand"] as? ItemStack,
                 map["weight"] as? Int ?: 1,
+                map["overrideEquipment"] as? Boolean ?: false,
+                map["isBaby"] as? Boolean ?: false
             )
         }
     }

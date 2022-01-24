@@ -92,5 +92,6 @@
         <module>glow</module>
         <module>packets</module>
         <module>spawners</module>
+        <module>buildertools</module>
     </modules>
 </project>

@@ -11,7 +11,7 @@ import moe.quill.pinion.packets.wrappers.serializers.WrappedSerializer
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
-private val glowCache = biCache<Block, Int>()
+val glowCache = biCache<Block, Int>()
 private val packetCache = mutableMapOf<Int, PacketContainer>()
 
 class GlowHandler {

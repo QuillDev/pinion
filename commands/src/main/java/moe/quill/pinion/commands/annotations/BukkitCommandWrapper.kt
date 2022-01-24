@@ -127,8 +127,12 @@ class BukkitCommandWrapper(
                 klass == String::class -> {
                     mappedArgs[param] = raw
                 }
+                //Numbers
                 klass == Int::class -> {
                     mappedArgs[param] = raw.toInt()
+                }
+                klass == Float::class -> {
+                    mappedArgs[param] = raw.toFloat()
                 }
                 klass == Double::class -> {
                     mappedArgs[param] = raw.toDouble()
@@ -157,7 +161,7 @@ class BukkitCommandWrapper(
     }
 
     fun hasPermission(sender: CommandSender, permission: String): Boolean {
-        return sender.hasPermission(permission) || sender.isOp
+        return sender.hasPermission(permission) || sender.isOp || permission.isEmpty()
     }
 
     override fun tabComplete(

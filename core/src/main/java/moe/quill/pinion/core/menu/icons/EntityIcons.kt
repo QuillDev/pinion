@@ -73,5 +73,13 @@ val entityIcons = mutableMapOf(
     EntityType.ZOMBIE_VILLAGER to itemBuilder(Material.PLAYER_HEAD) {
         name { Component.text("Zombie Villager") }
         skullTexture { MobHead.ZOMBIE_VILLAGER.texture }
-    }
+    },
+    EntityType.DROWNED to itemBuilder(Material.PLAYER_HEAD) {
+        name { Component.text("Drowned") }
+        skullTexture { MobHead.DROWNED.texture }
+    },
+    EntityType.GUARDIAN to itemBuilder(Material.PLAYER_HEAD) {
+        name { Component.text("Guardian") }
+        skullTexture { MobHead.GUARDIAN.texture }
+    },
 )

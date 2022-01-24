@@ -2,10 +2,7 @@ package moe.quill.pinion.selections;
 
 import moe.quill.pinion.commands.CommandProcessor
 import moe.quill.pinion.core.architecture.Module
-import moe.quill.pinion.selectapi.components.Bounds
-import moe.quill.pinion.selectapi.components.NamedLocation
-import moe.quill.pinion.selectapi.components.Schematic
-import moe.quill.pinion.selectapi.components.Zone
+import moe.quill.pinion.selectapi.components.*
 import moe.quill.pinion.selectapi.components.handler.SelectionHandler
 import moe.quill.pinion.selections.commands.BasicCommands
 import moe.quill.pinion.selections.handler.SelectionHandlerImpl
@@ -21,6 +18,7 @@ class Selections : JavaPlugin(), Module {
     override fun onEnable() {
 
         //Register Serializations
+        ConfigurationSerialization.registerClass(LocationGroup::class.java)
         ConfigurationSerialization.registerClass(NamedLocation::class.java)
         ConfigurationSerialization.registerClass(Bounds::class.java)
         ConfigurationSerialization.registerClass(Zone::class.java)
