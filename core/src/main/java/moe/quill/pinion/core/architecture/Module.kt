@@ -1,5 +1,6 @@
 package moe.quill.pinion.core.architecture
 
+import moe.quill.pinion.core.extensions.onlinePlayers
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
 import org.bukkit.Bukkit
@@ -40,5 +41,8 @@ interface Module : ForwardingAudience {
 
     override fun audiences(): MutableIterable<Audience> {
         return Bukkit.getServer().onlinePlayers
+    }
+
+    fun test() {
     }
 }

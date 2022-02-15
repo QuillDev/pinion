@@ -72,7 +72,7 @@
         <dependency>
             <groupId>moe.quill.pinion</groupId>
             <artifactId>commands</artifactId>
-            <version>0.0.1</version>
+            <version>${pinion.commands.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

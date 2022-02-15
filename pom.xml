@@ -2,11 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>moe.quill.pinion</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.0.1</version>
-    <packaging>pom</packaging>
 
     <properties>
         <java.version>17</java.version>
@@ -15,7 +10,25 @@
         <kotlin.version>1.6.10</kotlin.version>
         <paper.version>1.18.1-R0.1-SNAPSHOT</paper.version>
         <protocollib.version>4.8.0-SNAPSHOT</protocollib.version>
+
+        <!--Versions-->
+        <pinion.parent.version>0.0.1</pinion.parent.version>
+        <pinion.core.version>0.0.1</pinion.core.version>
+        <pinion.scoreboard.version>0.0.1</pinion.scoreboard.version>
+        <pinion.spawners.verison>0.0.2</pinion.spawners.verison>
+        <pinion.selections.version>0.0.1</pinion.selections.version>
+        <pinion.tasks.version>0.0.1</pinion.tasks.version>
+        <pinion.commands.version>0.0.1</pinion.commands.version>
+        <pinion.packets.version>0.0.1</pinion.packets.version>
+        <pinion.glow.version>0.0.1</pinion.glow.version>
     </properties>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>moe.quill.pinion</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+
 
     <repositories>
         <repository>
@@ -93,5 +106,7 @@
         <module>packets</module>
         <module>spawners</module>
         <module>buildertools</module>
+        <module>mobs</module>
+        <module>tasks</module>
     </modules>
 </project>

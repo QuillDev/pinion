@@ -2,12 +2,10 @@ package moe.quill.pinion.core.items
 
 import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.OfflinePlayer
+import org.bukkit.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
@@ -75,6 +73,12 @@ class ItemBuilder(private val item: ItemStack) {
 
     fun modelData(modelData: () -> Int?) {
         applyMeta { it.setCustomModelData(modelData()) }
+    }
+
+    fun armorColor(color: () -> Color) {
+        applyMeta { meta ->
+            (meta as? LeatherArmorMeta)?.setColor(color())
+        }
     }
 
     fun build(): ItemStack {

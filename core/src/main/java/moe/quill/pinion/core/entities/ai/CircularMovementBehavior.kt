@@ -9,11 +9,12 @@ class MovementCircularBehavior(
     center: Location,
     private val radius: Double,
     resolution: Int,
-    private val shift: Double
+    private val shift: Double,
+    val shiftPhase: Boolean = false
 ) : MovementBehavior(center, 360 * resolution) {
 
     override fun update(): Location {
-        val progress = ticks / resolution.toFloat() * 360f + shift
+        val progress = (ticks / resolution.toFloat() * 360f + shift) * (if (shiftPhase) -1 else 1)
         val x = cos(progress) * radius
         val z = sin(progress) * radius
         if (ticks >= resolution) {

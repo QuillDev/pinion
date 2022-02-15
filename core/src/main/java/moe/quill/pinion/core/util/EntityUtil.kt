@@ -17,8 +17,13 @@ val entityTypeCache = EntityType.values().mapNotNull {
     else it.entityClass to it
 }.toMap()
 
-fun <T : Entity> spawnEntity(klass: KClass<out T>, location: Location, preSpawn: T.() -> Unit = {}): T? {
-    val type = entityTypeCache[klass.java] ?: return null
+/**
+ * Spawn an entity
+ * NOTE: If you somehow, SOMEHOW manage to choose an entity class without an entity type
+ * this will throw an NPE
+ */
+fun <T : Entity> spawnEntity(klass: KClass<out T>, location: Location, preSpawn: T.() -> Unit = {}): T {
+    val type = entityTypeCache[klass.java]!!
     return location.world.spawnEntity(location, type, CreatureSpawnEvent.SpawnReason.CUSTOM) {
         preSpawn(it as T)
     } as T

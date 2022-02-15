@@ -4,12 +4,15 @@ import moe.quill.pinion.buildertools.commands.trails.TrailData
 import moe.quill.pinion.commands.annotations.Command
 import moe.quill.pinion.commands.annotations.CommandGroup
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.data.Waterlogged
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.Plugin
 import java.util.*
@@ -64,6 +67,37 @@ class BuildToolCommands(private val plugin: Plugin) : Listener {
         }
     }
 
+    val hiding = mutableSetOf<UUID>()
+
+    @Command("hide")
+    fun hide(player: CommandSender) {
+        if (player !is Player) return
+
+        val uuid = player.uniqueId
+
+        val currentlyHiding = hiding.contains(uuid)
+        Bukkit.getOnlinePlayers().forEach {
+            if (player == it) return@forEach
+            if (currentlyHiding) player.showPlayer(plugin, it)
+            else player.hidePlayer(plugin, it)
+        }
+
+        if (currentlyHiding) hiding -= uuid
+        else hiding += player.uniqueId
+
+        player.sendMessage(
+            Component.text("You are ${if (currentlyHiding) "no longer" else "now"} hiding other players.")
+                .color(NamedTextColor.GREEN)
+        )
+    }
+
+    @EventHandler
+    fun onJoin(event: PlayerJoinEvent) {
+        hiding.mapNotNull { Bukkit.getPlayer(it) }.forEach {
+            it.hidePlayer(plugin, event.player)
+        }
+    }
+
     val trailing = mutableMapOf<UUID, TrailData>()
 
     @Command("trail")
@@ -86,4 +120,5 @@ class BuildToolCommands(private val plugin: Plugin) : Listener {
         if (event.to.toVector() == event.from.toVector()) return
         event.player.location.block.type = trailData.type
     }
+
 }

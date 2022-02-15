@@ -1,48 +1,48 @@
 package moe.quill.pinion.core.functional;
 
 import org.bukkit.plugin.Plugin
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
-import java.util.concurrent.atomic.AtomicLong
 
-class TimedLambda(private val lambda: () -> Unit) {
+class TimedLambda(private val lambda: (BukkitRunnable) -> Unit) {
 
     private var task: BukkitTask? = null
 
-    fun cancel() {
-        task?.cancel()
-    }
-
-    fun runTaskTimer(plugin: Plugin, interval: Long): BukkitTask {
-
-        val lastRun = AtomicLong(0)
-
-        val runner = Lambda {
-            if (System.currentTimeMillis() - lastRun.get() < interval) return@Lambda;
-            lambda()
-            lastRun.set(System.currentTimeMillis())
-        }.runTaskTimer(plugin, 0, 1);
-
-        this.task = runner
-        return runner
-    }
-
-    /**
-     * Run a task x milliseconds later
-     *
-     * @param plugin to register this under
-     * @param delay to run later
-     * @return the bukkit task for this runnable
-     */
     fun runTaskLater(plugin: Plugin, delay: Long): BukkitTask {
-        val runTime = System.currentTimeMillis() + delay;
+        val startTime = System.currentTimeMillis() + delay
 
-        val runner = Lambda {
-            if (System.currentTimeMillis() < runTime) return@Lambda
-            lambda()
-            cancel();
-        }.runTaskTimer(plugin, 0, 10);
+        return Lambda {
+            if (System.currentTimeMillis() < startTime) return@Lambda
+            //Run the task when the time is valid
+            object : BukkitRunnable() {
+                override fun run() {
+                    lambda(this)
+                }
+            }.runTask(plugin)
+            //Cancel this
+            it.cancel()
+        }.runTaskTimer(plugin, 0, 1)
+    }
 
-        this.task = runner
-        return runner;
+    fun runTaskTimer(plugin: Plugin, delay: Long, interval: Long): BukkitTask {
+        return TimedLambda { parent ->
+            var nextActivation = 0L
+            Lambda child@{ child ->
+                if (parent.isCancelled) {
+                    child.cancel()
+                    return@child
+                }
+
+                //Check if we've passed the next activation time
+                if (System.currentTimeMillis() < nextActivation) return@child
+                object : BukkitRunnable() {
+                    override fun run() {
+                        lambda(this)
+                    }
+                }.runTask(plugin)
+                nextActivation = System.currentTimeMillis() + interval
+            }.runTaskTimer(plugin, 0, 1)
+
+        }.runTaskLater(plugin, delay)
     }
 }

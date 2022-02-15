@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.writeText
 
 open class ConfigManager<T : Any>(
     plugin: Plugin,
@@ -21,8 +22,9 @@ open class ConfigManager<T : Any>(
 
     fun yaml(): YamlConfiguration {
         if (!path.toFile().exists()) {
-            path.parent.toFile().mkdirs()
-            path.toFile().createNewFile()
+//            path.parent.toFile().mkdirs()
+//            path.toFile().createNewFile()
+            write(default())
         }
         return YamlConfiguration.loadConfiguration(path.toFile())
     }

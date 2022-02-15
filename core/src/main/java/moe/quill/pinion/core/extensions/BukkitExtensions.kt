@@ -1,6 +1,9 @@
 package moe.quill.pinion.core.extensions
 
 import org.bukkit.Bukkit
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Item
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
@@ -15,3 +18,15 @@ fun Plugin.registerEvents(vararg events: Listener) = events.forEach { server.plu
 fun unregisterEvents(vararg events: Listener) = events.forEach { HandlerList.unregisterAll(it) }
 
 fun onlinePlayers(): List<Player> = Bukkit.getOnlinePlayers().toList()
+
+fun Entity.persist() = run {
+    isPersistent = true
+
+    if (this is LivingEntity) {
+        removeWhenFarAway = false
+    }
+
+    if (this is Item) {
+        setWillAge(false)
+    }
+}
