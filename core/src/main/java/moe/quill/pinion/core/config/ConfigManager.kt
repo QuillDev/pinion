@@ -2,9 +2,8 @@ package moe.quill.pinion.core.config
 
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
-import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.writeText
+import kotlin.io.path.Path
 
 open class ConfigManager<T : Any>(
     plugin: Plugin,
@@ -16,14 +15,12 @@ open class ConfigManager<T : Any>(
     var data: T
 
     init {
-        this.path = Path.of(plugin.dataFolder.path.toString(), *pathExtension)
+        this.path = Path(plugin.dataFolder.path.toString(), *pathExtension)
         this.data = read()
     }
 
     fun yaml(): YamlConfiguration {
         if (!path.toFile().exists()) {
-//            path.parent.toFile().mkdirs()
-//            path.toFile().createNewFile()
             write(default())
         }
         return YamlConfiguration.loadConfiguration(path.toFile())
