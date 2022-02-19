@@ -108,5 +108,6 @@
         <module>buildertools</module>
         <module>mobs</module>
         <module>tasks</module>
+        <module>misc</module>
     </modules>
 </project>

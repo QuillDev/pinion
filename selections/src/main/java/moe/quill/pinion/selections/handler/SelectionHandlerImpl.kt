@@ -15,6 +15,8 @@ import moe.quill.pinion.selections.managers.schematic.SchematicManager
 import moe.quill.pinion.selections.managers.zones.ZoneCommands
 import moe.quill.pinion.selections.managers.zones.ZoneManager
 import org.bukkit.Location
+import org.bukkit.event.EventHandler
+import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.Plugin
 import java.util.*
 
@@ -155,5 +157,13 @@ class SelectionHandlerImpl(plugin: Plugin, commandProcessor: CommandProcessor) :
 
     override fun getLocations(): List<NamedLocation> {
         return locationManager.data
+    }
+
+    @EventHandler
+    fun saveAll(event: PluginDisableEvent) {
+        locationManager.write()
+        zoneManager.write()
+        schematicManager.write()
+        locationGroupHandler.write()
     }
 }

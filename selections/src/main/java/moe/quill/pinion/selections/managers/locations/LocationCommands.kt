@@ -59,6 +59,14 @@ class LocationCommands(private val selectionHandler: SelectionHandler) {
         )
     }
 
+    @Command("setyaw", "yaw")
+    fun yaw(sender: CommandSender, namedLoc: NamedLocation) {
+        if (sender !is Player) return
+        namedLoc.location.yaw = sender.location.yaw
+        sender.sendMessage(Component.text("Changed yaw to ${sender.location.yaw}"))
+
+    }
+
     @Command("teleport", aliases = ["tp"])
     fun teleport(sender: CommandSender, namedLoc: NamedLocation) {
         if (sender !is Player) return
