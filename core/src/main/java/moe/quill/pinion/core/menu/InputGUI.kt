@@ -1,5 +1,9 @@
 package moe.quill.pinion.core.menu
 
+import moe.quill.pinion.core.extensions.BOLD
+import moe.quill.pinion.core.extensions.GREEN
+import moe.quill.pinion.core.extensions.YELLOW
+import moe.quill.pinion.core.extensions.text
 import moe.quill.pinion.core.items.builder
 import moe.quill.pinion.core.items.itemBuilder
 import moe.quill.pinion.core.menu.icons.IconTexture

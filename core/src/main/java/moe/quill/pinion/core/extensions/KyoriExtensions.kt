@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import java.time.Duration
-import kotlin.reflect.jvm.internal.impl.descriptors.Named
 
 private val rainbowColors = listOf(
     NamedTextColor.RED,
@@ -49,7 +48,7 @@ class ComponentBuilder(base: TextComponent = Component.empty()) {
         builder = builder.style(style())
     }
 
-    fun clickEvent(clickEvent: () -> ClickEvent) {
+    fun addClickEvent(clickEvent: () -> ClickEvent) {
         builder = builder.clickEvent(clickEvent())
     }
 
@@ -93,7 +92,7 @@ class ComponentBuilder(base: TextComponent = Component.empty()) {
     }
 
     operator fun ClickEvent.unaryPlus() {
-        clickEvent { this }
+        addClickEvent { this }
     }
 
     operator fun <V> HoverEvent<V>.unaryPlus() {
@@ -135,6 +134,12 @@ fun title(
     return Title.title(title, subtitle, times)
 }
 
+// Click event
+fun addClickEvent(action: ClickEvent.Action, value: String): ClickEvent {
+    return ClickEvent.clickEvent(action, value)
+}
+
+//Shortcuts for spacing
 val newline = Component.newline()
 val space = Component.space()
 

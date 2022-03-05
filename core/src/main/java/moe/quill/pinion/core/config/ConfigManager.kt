@@ -1,15 +1,19 @@
 package moe.quill.pinion.core.config
 
 import moe.quill.pinion.core.extensions.log
+import moe.quill.pinion.core.extensions.registerEvents
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.Plugin
 import java.nio.file.Path
 
 open class ConfigManager<T : Any>(
-    plugin: Plugin,
+    val plugin: Plugin,
     val default: () -> T,
     vararg pathExtension: String,
-) {
+) : Listener {
 
     val path: Path
     var data: T
@@ -17,6 +21,8 @@ open class ConfigManager<T : Any>(
     init {
         this.path = Path.of(plugin.dataFolder.path.toString(), *pathExtension)
         this.data = read()
+
+        setupSave()
     }
 
     fun yaml(): YamlConfiguration {
@@ -46,5 +52,15 @@ open class ConfigManager<T : Any>(
             file.createNewFile()
         }
         file.writeText(raw.saveToString())
+    }
+
+    private fun setupSave() {
+        plugin.registerEvents(this)
+    }
+
+    @EventHandler
+    fun saveOnDisable(event: PluginDisableEvent) {
+        log("Saving config ${this::class.simpleName}")
+        write()
     }
 }

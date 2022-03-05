@@ -1,5 +1,6 @@
 package moe.quill.pinion.core.extensions
 
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.data.BlockData
@@ -22,4 +23,8 @@ fun Collection<Block>.replace(type: Material) {
 
 fun Collection<Block>.replace(data: BlockData) {
     forEach { it.blockData = data }
+}
+
+fun Block.center(): Location {
+    return location.add(0.5, 0.0, 0.5)
 }
