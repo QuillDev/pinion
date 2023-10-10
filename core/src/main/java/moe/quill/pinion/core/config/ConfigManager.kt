@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin
 import java.nio.file.Path
 
 open class ConfigManager<T : Any>(
-    val plugin: Plugin,
+    open val plugin: Plugin,
     val default: () -> T,
     vararg pathExtension: String,
 ) : Listener {

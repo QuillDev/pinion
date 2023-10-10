@@ -9,7 +9,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <kotlin.version>1.6.10</kotlin.version>
         <paper.version>1.18.1-R0.1-SNAPSHOT</paper.version>
-        <protocollib.version>4.8.0-SNAPSHOT</protocollib.version>
+        <protocollib.version>5.1.0</protocollib.version>
 
         <!--Versions-->
         <pinion.parent.version>0.0.1</pinion.parent.version>

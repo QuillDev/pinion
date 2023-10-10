@@ -30,7 +30,7 @@ import org.bukkit.potion.PotionType
 import java.util.*
 import kotlin.reflect.full.isSubclassOf
 
-class SpawnerManager(private val plugin: Plugin) :
+class SpawnerManager(override val plugin: Plugin) :
     ConfigManager<MutableList<Spawner>>(plugin, { mutableListOf() }, "spawners.yml"), CommandArgTranslator<Spawner>,
     Listener {
 

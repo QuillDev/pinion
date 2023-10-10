@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>${protocollib.version}</version>
+            <version>5.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
